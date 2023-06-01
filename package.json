@@ -10,12 +10,20 @@
   },
   "dependencies": {
     "autoprefixer": "10.4.14",
+    "axios": "^1.4.0",
     "eslint": "8.41.0",
     "eslint-config-next": "13.4.4",
+    "framer-motion": "^10.12.16",
+    "moment": "^2.29.4",
+    "mongodb": "^5.5.0",
     "next": "13.4.4",
     "postcss": "8.4.24",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-icons": "^4.8.0",
     "tailwindcss": "3.3.2"
+  },
+  "devDependencies": {
+    "mongoose": "^7.2.1"
   }
 }
