@@ -26,8 +26,3 @@ body {
     rgb(var(--background-start-rgb));
 }
 
-input[type="checkbox"] {
-  width: 18px;                        
-  height: 18px;                       
-  clip-path: circle(40% at 50% 50%);  
-}
