@@ -1,6 +1,6 @@
 import Todo from "../../../../../models/todo";
 
-export async function POST(request, context) {
+export async function PUT(request, context) {
   try {
     const { id } = context.params;
     const updatedTask = await request.json();
