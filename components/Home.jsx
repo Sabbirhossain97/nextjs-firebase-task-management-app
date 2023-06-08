@@ -6,7 +6,6 @@ import { motion } from "framer-motion";
 import AllTasks from "./AllTasks";
 import ClearAll from "./ClearAll";
 import CompletedTasks from "./CompletedTasks";
-
 export default function Home() {
   const [todo, setTodo] = useState("");
   const [loading, setLoading] = useState(false);
@@ -53,40 +52,32 @@ export default function Home() {
     fetchTasks();
   }, [loading]);
 
-  const clearAllTasks = async () => {
-    try {
-      setLoading(true);
-      await axios.get("/api/clearAll");
-      setToggle(false);
-    } catch (err) {
-      console.log(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    const connectToDB = async () => {
-      await axios.get("/api/connect");
-    };
-    connectToDB();
+    try {
+      const connectToDB = async () => {
+        await axios.get("/api/connect");
+      };
+      connectToDB();
+    } catch (err) {
+      console.log("cant connect to database!");
+    }
   }, []);
 
   return (
     <div>
-      <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-slate-800 to-slate-900 ">
-        <div className="h-auto transition-[height] ease-out duration-200 w-11/12 md:w-3/4 lg:w-2/3 xl:w-2/3 2xl:w-1/3 bg-slate-900/20 rounded-lg p-10 drop-shadow-md shadow-cyan-800">
-          <div className="mt-3 text-sm text-white flex justify-between items-center">
+      <div className="relative flex justify-center items-center min-h-screen bg-gray-100 dark:bg-gradient-to-br from-slate-800 to-slate-900 ">
+        <div className="h-auto transition-[height] ease-out duration-200 w-11/12 md:w-3/4 lg:w-2/3 xl:w-2/3 2xl:w-1/3 bg-gray-200 bg-slate-900/20 rounded-lg p-10 drop-shadow-md shadow-cyan-800">
+          <div className="mt-3 text-sm  text-white flex justify-between items-center">
             <p className=" font-semibold">{moment().format("MMMM Do YYYY")}</p>
             <p className=" font-semibold">{moment().format("h:mm a")}</p>
           </div>
-          <p className="text-xl font-semibold mt-6 text-white border-l-4 border-cyan-700 pl-3">
+          <p className="text-xl font-semibold mt-6  text-white border-l-4  border-cyan-700 pl-3">
             To-do List
           </p>
           <div className="w-full mt-8 flex flex-row text-sm text-center justify-center ">
             <div className="w-full">
               <input
-                className=" w-full text-gray-400  font-semibold outline-none p-2 bg-inherit border-b border-cyan-600 placeholder-gray-400 placeholder:text-[14px]"
+                className=" w-full  text-gray-400  font-semibold outline-none p-2 bg-inherit border-b  border-cyan-600 placeholder-teal-700 dark:placeholder-gray-400 placeholder:text-[14px]"
                 placeholder="What needs to be done today?"
                 value={todo}
                 onChange={(e) => setTodo(e.target.value)}
@@ -95,7 +86,7 @@ export default function Home() {
             </div>
             <button
               onClick={handleTodo}
-              className="w-[80px] text-md  h-8 mt-2 bg-cyan-700 hover:bg-cyan-600 text-center transition text-white rounded-md ml-3"
+              className="w-[80px] text-md  h-8 mt-2 bg-cyan-700   hover:bg-cyan-600 text-center transition text-white rounded-md ml-3"
             >
               Add
             </button>
@@ -108,20 +99,20 @@ export default function Home() {
               exit={{ opacity: 0, x: 10 }}
               transition={{ delay: 0.5 }}
             >
-              <div className="flex flex-row border border-cyan-700 rounded h-8 ">
+              <div className="flex flex-row border  border-cyan-700 rounded h-8 ">
                 <p
                   onClick={() => setToggle(!toggle)}
-                  className={`cursor-pointer text-sm font-semibold p-1 px-2 ${
-                    toggle ? "" : "bg-cyan-700"
-                  } hover:bg-cyan-500 transition`}
+                  className={`cursor-pointer text-sm font-semibold p-1 px-3 ${
+                    toggle ? "" : " bg-cyan-700"
+                  } hover:bg-cyan-500  transition`}
                 >
-                  All tasks
+                  Current tasks
                 </p>
                 <p
                   onClick={() => setToggle(!toggle)}
                   className={`cursor-pointer text-sm font-semibold p-1 px-2 py-1 ${
-                    toggle ? "bg-cyan-700" : ""
-                  } hover:bg-cyan-500 transition`}
+                    toggle ? " bg-cyan-700 text-white" : ""
+                  } hover:bg-cyan-500   transition`}
                 >
                   Completed tasks
                 </p>
@@ -137,7 +128,6 @@ export default function Home() {
             ) : (
               <AllTasks data={data} loading={loading} setLoading={setLoading} />
             )}
-            {data.length > 0 ? <ClearAll clearall={clearAllTasks} /> : ""}
           </div>
         </div>
       </div>

@@ -6,6 +6,7 @@ import { MdOutlineClose } from "react-icons/md";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
+import ClearAll from "./ClearAll";
 
 export default function AllTasks({ data, loading, setLoading }) {
   const [editText, setEditText] = useState("");
@@ -36,10 +37,7 @@ export default function AllTasks({ data, loading, setLoading }) {
   const deleteTodo = async (id) => {
     try {
       setLoading(true);
-      const response = await axios
-        .delete(`/api/deleteTask/${id}`)
-        .then((data) => console.log(data))
-        .catch((err) => console.log(err));
+      await axios.delete(`/api/deleteTask/${id}`);
     } catch (err) {
       console.log(err);
     } finally {
@@ -59,7 +57,6 @@ export default function AllTasks({ data, loading, setLoading }) {
 
   const handleCheckedItem = (key) => {
     const getAttr = document.getElementById(key).checked;
-    console.log(getAttr)
     if (getAttr) {
       const result = data.filter((item, id) => {
         if (id === key) {
@@ -67,7 +64,7 @@ export default function AllTasks({ data, loading, setLoading }) {
         }
       });
       const [properties] = result;
-      const id = properties?._id; //item id
+      const id = properties?._id;
       completedTasks(id);
       setCompletedTodo(result);
     } else {
@@ -77,20 +74,29 @@ export default function AllTasks({ data, loading, setLoading }) {
 
   const completedTasks = async (id) => {
     try {
-      setLoading(true)
-      await axios
-        .put(`/api/completedTasks/${id}`, {
-          headers: { "Content-Type": "application/json" },
-        })
-        .then((data) => console.log(data))
-        .catch((err) => console.log(err));
+      setLoading(true);
+      await axios.put(`/api/completedTasks/${id}`, {
+        headers: { "Content-Type": "application/json" },
+      });
     } catch (err) {
       console.log(err);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   };
-  
+
+  const clearAllTasks = async () => {
+    try {
+      setLoading(true);
+      await axios.get("/api/clearAll");
+      setToggle(false);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <>
       <ul className=" max-h-[800px] transition duration-300 ease-out">
@@ -244,6 +250,7 @@ export default function AllTasks({ data, loading, setLoading }) {
           ""
         )}
       </ul>
+      {data.length > 0 ? <ClearAll clearall={clearAllTasks} /> : ""}
     </>
   );
 }
