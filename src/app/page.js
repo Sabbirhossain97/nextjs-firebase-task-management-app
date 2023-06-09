@@ -1,6 +1,19 @@
-import Home from "../../components/Home";
-import Register from "../../components/Register";
+"use client";
+import { useEffect } from "react";
+import axios from "axios";
+import Register from "./Register/page";
+import Login from "./Login/page";
 
 export default function Page() {
-  return <Register />;
+  useEffect(() => {
+    try {
+      const connectToDB = async () => {
+        await axios.get("/api/connect");
+      };
+      connectToDB();
+    } catch (err) {
+      console.log("cant connect to database!");
+    }
+  }, []);
+  return <Login />;
 }
