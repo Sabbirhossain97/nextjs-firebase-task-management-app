@@ -4,14 +4,18 @@ import axios from "axios";
 import moment from "moment/moment";
 import { motion } from "framer-motion";
 import AllTasks from "../../../components/AllTasks";
-import ClearAll from "../../../components/ClearAll";
 import CompletedTasks from "../../../components/CompletedTasks";
+import Loading from "../../../components/Loading";
+import Header from "../common/header";
+import User from "../../../components/User";
+import { use } from "bcrypt/promises";
+
 export default function Home() {
   const [todo, setTodo] = useState("");
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]);
   const [toggle, setToggle] = useState(false);
-
+  const [user, setUser] = useState(null);
   const handleTodo = async () => {
     if (todo === "") {
       return;
@@ -53,28 +57,36 @@ export default function Home() {
   }, [loading]);
 
   useEffect(() => {
-    try {
-      const connectToDB = async () => {
-        await axios.get("/api/connect");
-      };
-      connectToDB();
-    } catch (err) {
-      console.log("cant connect to database!");
-    }
-  }, []);
-
+    const token = window.localStorage.getItem("token");
+    const getUserData = async () => {
+      try {
+        await axios
+          .post("/api/userData", token, {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          })
+          .then((data) => setUser(data))
+          .catch((err) => console.log(err));
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    getUserData();
+  },[]);
+console.log(user)
   return (
     <div>
       <div className="relative flex justify-center items-center min-h-screen bg-gray-100 dark:bg-gradient-to-br from-slate-800 to-slate-900 ">
+        <Header />
+        <User user={user}/>
         <div className="h-auto transition-[height] ease-out duration-200 w-11/12 md:w-3/4 lg:w-2/3 xl:w-2/3 2xl:w-1/3 bg-gray-200 bg-slate-900/20 rounded-lg p-10 drop-shadow-md shadow-cyan-800">
           <div className="mt-3 text-sm  text-white flex justify-between items-center">
             <p className=" font-semibold">{moment().format("MMMM Do YYYY")}</p>
             <p className=" font-semibold">{moment().format("h:mm a")}</p>
           </div>
-          <p className="text-xl font-semibold mt-6  text-white border-l-4  border-cyan-700 pl-3">
-            To-do List
-          </p>
-          <div className="w-full mt-8 flex flex-row text-sm text-center justify-center ">
+
+          <div className="w-full mt-16 flex flex-row text-sm text-center justify-center ">
             <div className="w-full">
               <input
                 className=" w-full  text-gray-400  font-semibold outline-none p-2 bg-inherit border-b  border-cyan-600 placeholder-teal-700 dark:placeholder-gray-400 placeholder:text-[14px]"

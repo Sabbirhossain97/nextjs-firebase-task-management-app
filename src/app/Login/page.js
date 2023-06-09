@@ -4,7 +4,7 @@ import Link from "next/link";
 import axios from "axios";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer, toast } from "react-toastify";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { AiFillWarning } from "react-icons/ai";
 import Loading from "../../../components/Loading";
@@ -15,7 +15,7 @@ export default function Login() {
   const [message, setMessage] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
+  const router = useRouter();
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -52,6 +52,9 @@ export default function Login() {
         setError(message?.data.message);
       }, 1000);
       console.log(message);
+    } else if (message?.data.status === 200) {
+      localStorage.setItem("token", message?.data.token);
+      router.push("/Home");
     }
   }, [message]);
 

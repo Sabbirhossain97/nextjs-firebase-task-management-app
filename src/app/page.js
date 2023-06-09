@@ -1,7 +1,6 @@
 "use client";
 import { useEffect } from "react";
 import axios from "axios";
-import Register from "./Register/page";
 import Login from "./Login/page";
 
 export default function Page() {

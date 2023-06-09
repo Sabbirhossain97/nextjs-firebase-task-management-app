@@ -6,10 +6,9 @@ export async function POST(request) {
     const response = await request.json();
     const todo = new Todo({
       task: response,
-     
     });
     todo.save();
- 
+
     return new NextResponse(todo);
   } catch (error) {
     console.log("error saving data to mongoDB");

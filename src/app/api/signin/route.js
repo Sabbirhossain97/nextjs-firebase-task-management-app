@@ -15,16 +15,15 @@ export async function POST(request) {
       );
     }
     if (await bcrypt.compare(password, user.password)) {
-      const token = jwt.sign({}, process.env.JWT_SECRET);
-      console.log(token)
-       return new NextResponse(JSON.stringify({name: user.name, token: token}))
+      const token = jwt.sign({email: user.email}, process.env.JWT_SECRET);
+      return new NextResponse(
+        JSON.stringify({ name: user.name, token: token,status: 200 })
+      );
     } else {
       return new NextResponse(
         JSON.stringify({ message: "Wrong password!", status: 400 })
       );
     }
-
-   
   } catch (err) {
     console.log(err);
   }
