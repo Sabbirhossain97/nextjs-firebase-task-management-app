@@ -113,7 +113,7 @@ console.log(user)
             >
               <div className="flex flex-row border  border-cyan-700 rounded h-8 ">
                 <p
-                  onClick={() => setToggle(!toggle)}
+                  onClick={() => setToggle(false)}
                   className={`cursor-pointer text-sm font-semibold p-1 px-3 ${
                     toggle ? "" : " bg-cyan-700"
                   } hover:bg-cyan-500  transition`}
@@ -121,7 +121,7 @@ console.log(user)
                   Current tasks
                 </p>
                 <p
-                  onClick={() => setToggle(!toggle)}
+                  onClick={() => setToggle(true)}
                   className={`cursor-pointer text-sm font-semibold p-1 px-2 py-1 ${
                     toggle ? " bg-cyan-700 text-white" : ""
                   } hover:bg-cyan-500   transition`}
