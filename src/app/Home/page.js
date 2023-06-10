@@ -76,7 +76,13 @@ export default function Home() {
 
   return (
     <div>
-      <div className="relative flex justify-center items-center min-h-screen bg-gray-100 dark:bg-gradient-to-br from-slate-800 to-slate-900 ">
+      <motion.div
+        className="relative flex justify-center items-center min-h-screen bg-gray-100 dark:bg-gradient-to-br from-slate-800 to-slate-900 "
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ delay: 0.25 }}
+      >
         <Header />
         <User user={user} />
         <div className="h-auto transition-[height] ease-out duration-200 w-11/12 md:w-3/4 lg:w-2/3 xl:w-2/3 2xl:w-1/3 bg-gray-200 bg-slate-900/20 rounded-lg p-10 drop-shadow-md shadow-cyan-800">
@@ -141,7 +147,7 @@ export default function Home() {
             )}
           </div>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }

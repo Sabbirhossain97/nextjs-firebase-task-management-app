@@ -68,7 +68,13 @@ export default function Register() {
   return (
     <div>
       <section className=" bg-slate-900">
-        <div className="flex flex-col h-screen w-10/12 md:w-full items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
+        <motion.div
+          className="flex flex-col h-screen w-10/12 md:w-full items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0"
+          initial={{ opacity: 0}}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0}}
+          transition={{ delay: 0.25 }}
+        >
           <div className="w-full rounded-lg shadow border md:mt-0 sm:max-w-md xl:p-0 bg-slate-800/50 border-gray-700">
             <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
               <h1 className="text-xl text-center font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
@@ -163,7 +169,7 @@ export default function Register() {
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
       </section>
     </div>
   );
