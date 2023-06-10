@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { AiFillWarning } from "react-icons/ai";
 import Loading from "../../../components/Loading";
+import Cookies from "js-cookie";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -18,6 +19,9 @@ export default function Login() {
   const router = useRouter();
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (email | password === "") {
+      return;
+    }
     try {
       setLoading(true);
       await axios
@@ -54,6 +58,7 @@ export default function Login() {
       console.log(message);
     } else if (message?.data.status === 200) {
       localStorage.setItem("token", message?.data.token);
+      Cookies.set("isLoggedIn", true);
       router.push("/Home");
     }
   }, [message]);

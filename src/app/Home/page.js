@@ -5,10 +5,8 @@ import moment from "moment/moment";
 import { motion } from "framer-motion";
 import AllTasks from "../../../components/AllTasks";
 import CompletedTasks from "../../../components/CompletedTasks";
-import Loading from "../../../components/Loading";
 import Header from "../common/header";
 import User from "../../../components/User";
-import { use } from "bcrypt/promises";
 
 export default function Home() {
   const [todo, setTodo] = useState("");
@@ -16,6 +14,7 @@ export default function Home() {
   const [data, setData] = useState([]);
   const [toggle, setToggle] = useState(false);
   const [user, setUser] = useState(null);
+
   const handleTodo = async () => {
     if (todo === "") {
       return;
@@ -73,13 +72,13 @@ export default function Home() {
       }
     };
     getUserData();
-  },[]);
-console.log(user)
+  }, []);
+
   return (
     <div>
       <div className="relative flex justify-center items-center min-h-screen bg-gray-100 dark:bg-gradient-to-br from-slate-800 to-slate-900 ">
         <Header />
-        <User user={user}/>
+        <User user={user} />
         <div className="h-auto transition-[height] ease-out duration-200 w-11/12 md:w-3/4 lg:w-2/3 xl:w-2/3 2xl:w-1/3 bg-gray-200 bg-slate-900/20 rounded-lg p-10 drop-shadow-md shadow-cyan-800">
           <div className="mt-3 text-sm  text-white flex justify-between items-center">
             <p className=" font-semibold">{moment().format("MMMM Do YYYY")}</p>

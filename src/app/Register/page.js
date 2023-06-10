@@ -17,30 +17,35 @@ export default function Register() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      setLoading(true);
-      await axios
-        .post(
-          "/api/register",
-          {
-            name: name,
-            email: email,
-            password: password,
-          },
-          {
-            headers: {
-              "Content-Type": "application/json",
+    if (name | email | (password === "")) {
+      return;
+    } else {
+      try {
+        setLoading(true);
+        await axios
+          .post(
+            "/api/register",
+            {
+              name: name,
+              email: email,
+              password: password,
             },
-          }
-        )
-        .then((data) => setMessage(data))
-        .catch((err) => console.log(err));
-    } catch (err) {
-      console.log(err);
-    } finally {
-      setLoading(false);
+            {
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          )
+          .then((data) => setMessage(data))
+          .catch((err) => console.log(err));
+      } catch (err) {
+        console.log(err);
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -67,7 +72,7 @@ export default function Register() {
           <div className="w-full rounded-lg shadow border md:mt-0 sm:max-w-md xl:p-0 bg-slate-800/50 border-gray-700">
             <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
               <h1 className="text-xl text-center font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
-                Register your account
+                Sign up
               </h1>
               <div className="space-y-4 md:space-y-6">
                 <div>
@@ -95,6 +100,7 @@ export default function Register() {
                     Email
                   </label>
                   <input
+                    type="email"
                     placeholder="johndoe@gmail.com"
                     className={`border text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 bg-slate-800 border-gray-600 dark:placeholder-gray-700 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500`}
                     required
