@@ -4,12 +4,14 @@ import Todo from "../../../../models/todo";
 export async function POST(request) {
   try {
     const response = await request.json();
+
     const todo = new Todo({
-      task: response,
+      user_id: response?.userId,
+      task: response?.newTask,
     });
     todo.save();
 
-    return new NextResponse(todo);
+    return new NextResponse("ok");
   } catch (error) {
     console.log("error saving data to mongoDB");
   }

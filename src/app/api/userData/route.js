@@ -7,7 +7,7 @@ export async function POST(request) {
   try {
     const user = jwt.verify(token, process.env.JWT_SECRET);
     const userEmail = user.email;
-    const loggedInUser = await User.findOne({ email: userEmail })
+    const loggedInUser = await User.findOne({ email: userEmail });
     return new Response(JSON.stringify(loggedInUser));
   } catch (err) {
     console.log(err);

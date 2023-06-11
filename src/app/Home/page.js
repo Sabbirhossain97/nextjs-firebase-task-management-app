@@ -7,6 +7,10 @@ import AllTasks from "../../../components/AllTasks";
 import CompletedTasks from "../../../components/CompletedTasks";
 import Header from "../common/header";
 import User from "../../../components/User";
+import { AiOutlineSend } from "react-icons/ai";
+import SimpleBar from "simplebar-react";
+import "simplebar-react/dist/simplebar.min.css";
+import ClearAll from "../../../components/ClearAll";
 
 export default function Home() {
   const [todo, setTodo] = useState("");
@@ -14,6 +18,7 @@ export default function Home() {
   const [data, setData] = useState([]);
   const [toggle, setToggle] = useState(false);
   const [user, setUser] = useState(null);
+  const [undo, setUndo]= useState(false)
 
   const handleTodo = async () => {
     if (todo === "") {
@@ -22,11 +27,18 @@ export default function Home() {
       try {
         setLoading(true);
         await axios
-          .post("/api/newtask", todo, {
-            headers: {
-              "Content-Type": "application/json",
+          .post(
+            "/api/newtask",
+            {
+              newTask: todo,
+              userId: user?.data._id,
             },
-          })
+            {
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          )
           .then((data) => console.log(data))
           .catch((err) => console.log(err));
       } catch (err) {
@@ -41,7 +53,17 @@ export default function Home() {
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const response = await axios.get("/api/allTasks");
+        const response = await axios.post(
+          "/api/allTasks",
+          {
+            userId: user?.data._id,
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
         const result = response.data.filter((item) => {
           if (item.completed === false) {
             return item;
@@ -53,13 +75,14 @@ export default function Home() {
       }
     };
     fetchTasks();
-  }, [loading]);
+  }, [loading,undo]);
 
   useEffect(() => {
-    const token = window.localStorage.getItem("token");
     const getUserData = async () => {
       try {
-        await axios
+        const token = window.localStorage.getItem("token");
+
+        const response = axios
           .post("/api/userData", token, {
             headers: {
               "Content-Type": "application/json",
@@ -74,10 +97,22 @@ export default function Home() {
     getUserData();
   }, []);
 
+  const clearAllTasks = async () => {
+    try {
+      setLoading(true);
+      await axios.get("/api/clearAll");
+      setToggle(false);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div>
       <motion.div
-        className="relative flex justify-center items-center min-h-screen bg-gray-100 dark:bg-gradient-to-br from-slate-800 to-slate-900 "
+        className="relative transition-[height] flex justify-center items-center min-h-screen bg-gray-100 dark:bg-gradient-to-br from-slate-800 to-slate-900 "
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -85,7 +120,7 @@ export default function Home() {
       >
         <Header />
         <User user={user} />
-        <div className="h-auto transition-[height] ease-out duration-200 w-11/12 md:w-3/4 lg:w-2/3 xl:w-2/3 2xl:w-1/3 bg-gray-200 bg-slate-900/20 rounded-lg p-10 drop-shadow-md shadow-cyan-800">
+        <div className="h-[700px] mt-10 transition-all w-11/12 md:w-3/4 lg:w-2/3 xl:w-2/3 2xl:w-1/3 bg-gray-200 bg-slate-900/20 rounded-lg p-10 drop-shadow-md shadow-cyan-800">
           <div className="mt-3 text-sm  text-white flex justify-between items-center">
             <p className=" font-semibold">{moment().format("MMMM Do YYYY")}</p>
             <p className=" font-semibold">{moment().format("h:mm a")}</p>
@@ -103,9 +138,9 @@ export default function Home() {
             </div>
             <button
               onClick={handleTodo}
-              className="w-[80px] text-md  h-8 mt-2 bg-cyan-700   hover:bg-cyan-600 text-center transition text-white rounded-md ml-3"
+              className="flex justify-center items-center w-[60px] text-md  h-8 mt-2 bg-cyan-600 hover:bg-cyan-500 text-center transition text-white rounded-md ml-3"
             >
-              Add
+              <AiOutlineSend className="text-lg text-white" />
             </button>
           </div>
           {data ? (
@@ -138,14 +173,20 @@ export default function Home() {
           ) : (
             ""
           )}
-
-          <div className="mt-6">
-            {toggle ? (
-              <CompletedTasks setLoading={setLoading} />
-            ) : (
-              <AllTasks data={data} loading={loading} setLoading={setLoading} />
-            )}
-          </div>
+          <SimpleBar className="h-[300px] mt-4">
+            <div className=" mt-6">
+              {toggle ? (
+                <CompletedTasks user={user} undo={undo} setUndo={setUndo} />
+              ) : (
+                <AllTasks
+                  data={data}
+                  loading={loading}
+                  setLoading={setLoading}
+                />
+              )}
+            </div>
+          </SimpleBar>
+         {data.length > 0 ?  <ClearAll clearall={clearAllTasks} toggle={toggle}/> : "" }
         </div>
       </motion.div>
     </div>

@@ -18,11 +18,11 @@ export default function User({ user }) {
   return (
     <div>
       {open ? (
-        <div onClick={() => setOpen(!open)} className="fixed inset-0"></div>
+        <div onClick={() => setOpen(!open)} className="fixed inset-0 z-0"></div>
       ) : (
         ""
       )}
-      <div className="absolute top-10 right-20 ">
+      <div className="absolute top-10 right-4 md:right-20 ">
         <div
           onClick={() => setOpen(!open)}
           className="cursor-pointer flex items-center justify-end px-2 transition text-sm font-medium text-gray-900 rounded-full hover:text-cyan-600  md:mr-0 focus:ring-2 focus:ring-gray-100 dark:focus:ring-gray-700 dark:text-white"
@@ -30,19 +30,35 @@ export default function User({ user }) {
         >
           <AiOutlineUser className="text-2xl text-cyan-600 " />
           <span className="ml-2 text-md">{user?.data.name}</span>
-          <svg
-            className="w-4 h-4 mx-1.5 "
-            aria-hidden="true"
-            fill="currentColor"
-            viewBox="0 0 20 20"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              fill-rule="evenodd"
-              d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-              clipRule="evenodd"
-            ></path>
-          </svg>
+          {open ? (
+            <svg
+              class="w-4 h-4 mx-1.5 "
+              aria-hidden="true"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                fillRule="evenodd"
+                d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z"
+                clipRule="evenodd"
+              ></path>
+            </svg>
+          ) : (
+            <svg
+              className="w-4 h-4 mx-1.5 "
+              aria-hidden="true"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                fillRule="evenodd"
+                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                clipRule="evenodd"
+              ></path>
+            </svg>
+          )}
         </div>
         <AnimatePresence>
           {open ? (

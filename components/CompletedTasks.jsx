@@ -4,57 +4,69 @@ import { BiUndo } from "react-icons/bi";
 import axios from "axios";
 import { BsCheckLg } from "react-icons/bs";
 
-export default function CompletedTasks({ setLoading }) {
+export default function CompletedTasks({ user, setUndo, undo }) {
   const [completedTasks, setCompletedTasks] = useState(null);
-  const [empty, setEmpty] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const completedTasks = async () => {
       try {
-        setLoading(true);
-        const response = await axios.get("/api/allTasks");
-        const result = response.data.filter((item) => {
-          if (item.completed === true) {
-            return item;
-          }
-        });
-        setCompletedTasks(result);
+        await axios
+          .post(
+            "/api/allTasks",
+            {
+              userId: user?.data._id,
+            },
+            {
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          )
+          .then((data) => {
+            const result = data.data.filter((item) => {
+              if (item.completed === true) {
+                return item;
+              }
+            });
+            setCompletedTasks(result);
+          })
+          .catch((err) => console.log(err));
       } catch (err) {
         console.log(err);
-      } finally {
-        setLoading(false);
       }
     };
     completedTasks();
-  }, [empty]);
+  }, [loading, undo]);
 
   const redoTasks = async (id) => {
     try {
-      setEmpty(true);
+      setUndo(true);
       await axios.put(`/api/redoTasks/${id}`, {
         headers: { "Content-Type": "application/json" },
       });
     } catch (err) {
       console.log(err);
     } finally {
-      setEmpty(false);
+      setUndo(false);
     }
   };
 
   const clearAllCompletedTasks = async () => {
     try {
-      setEmpty(true);
+      setLoading(true);
       await axios.get("/api/clearCompletedTasks");
     } catch (err) {
       console.log(err);
     } finally {
-      setEmpty(false);
+      setLoading(false);
     }
   };
 
+
   return (
-    <>
-      <ul className=" max-h-[800px] transition delay-300 ease-out">
+    <div>
+      <ul className=" transition-[height] delay-300 ease-out ">
         <AnimatePresence>
           {completedTasks ? (
             completedTasks.length > 0 ? (
@@ -86,7 +98,7 @@ export default function CompletedTasks({ setLoading }) {
               ))
             ) : (
               <motion.div
-                className="mx-auto text-center text-sm mt-20 h-48   p-2 rounded-md"
+                className=" mx-auto text-center text-sm mt-40  p-2 rounded-md"
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 15 }}
@@ -103,7 +115,7 @@ export default function CompletedTasks({ setLoading }) {
       {completedTasks ? (
         completedTasks.length > 0 ? (
           <motion.div
-            className="text-sm mt-4 flex justify-end border-t-1 border-cyan-700 py-4"
+            className=" text-sm mt-4 flex justify-end border-t-1 border-cyan-700 py-4"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, x: 10 }}
@@ -120,6 +132,6 @@ export default function CompletedTasks({ setLoading }) {
       ) : (
         ""
       )}
-    </>
+    </div>
   );
 }

@@ -6,9 +6,10 @@ import { MdOutlineClose } from "react-icons/md";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
-import ClearAll from "./ClearAll";
+import { BsCircle } from "react-icons/bs";
+import { BsCheckCircle } from "react-icons/bs";
 
-export default function AllTasks({ data, loading, setLoading }) {
+export default function AllTasks({ data, setLoading }) {
   const [editText, setEditText] = useState("");
   const [currentItem, setCurrentItem] = useState(null);
   const [completedTodo, setCompletedTodo] = useState(null);
@@ -56,7 +57,7 @@ export default function AllTasks({ data, loading, setLoading }) {
   };
 
   const handleCheckedItem = (key) => {
-    const getAttr = document.getElementById(key).checked;
+    const getAttr = document.getElementById(key);
     if (getAttr) {
       const result = data.filter((item, id) => {
         if (id === key) {
@@ -85,21 +86,9 @@ export default function AllTasks({ data, loading, setLoading }) {
     }
   };
 
-  const clearAllTasks = async () => {
-    try {
-      setLoading(true);
-      await axios.get("/api/clearAll");
-      setToggle(false);
-    } catch (err) {
-      console.log(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
     <>
-      <ul className=" max-h-[800px] transition duration-300 ease-out">
+      <ul className=" transition duration-300 ease-out">
         {data ? (
           data.length === 0 ? (
             <motion.div
@@ -132,14 +121,16 @@ export default function AllTasks({ data, loading, setLoading }) {
                   <div className="flex gap-2">
                     <div className="w-11/12 h-10 bg-transparent transition border border-cyan-600 rounded-[7px] flex justify-start items-center px-3">
                       <div className="flex items-center mr-1">
-                        <input
+                        <span
+                          className="cursor-pointer"
                           id={key}
-                          type="checkbox"
-                          onChange={() => {
+                          onClick={() => {
                             handleCheckedItem(key);
                           }}
-                          className="w-3 h-3 text-green-600 bg-gray-100 border-gray-300"
-                        />
+                          title="mark as complete"
+                        >
+                          <BsCircle className="text-sm transition text-cyan-500 hover:ring-1 ring-cyan-500 rounded-full" />
+                        </span>
                       </div>
                       {edit && item._id === currentItem[0]._id ? (
                         <input
@@ -250,7 +241,6 @@ export default function AllTasks({ data, loading, setLoading }) {
           ""
         )}
       </ul>
-      {data.length > 0 ? <ClearAll clearall={clearAllTasks} /> : ""}
     </>
   );
 }
