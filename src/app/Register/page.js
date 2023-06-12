@@ -2,8 +2,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Link from "next/link";
-import "react-toastify/dist/ReactToastify.css";
-import { ToastContainer, toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import Loading from "../../../components/Loading";
@@ -51,12 +49,6 @@ export default function Register() {
 
   useEffect(() => {
     if (message?.data === 200) {
-      toast.success("Registered successfully!", {
-        position: "top-right",
-        autoClose: 3000,
-        theme: "dark",
-        toastId: "success1",
-      });
       router.push("/Login");
     } else if (message?.data === 404) {
       setTimeout(() => {
@@ -158,7 +150,6 @@ export default function Register() {
                 >
                   {loading ? <Loading /> : "Create an account"}
                 </button>
-                <ToastContainer />
                 <p className="text-sm text-center font-semibold text-gray-500 dark:text-gray-400">
                   Already have an account?{" "}
                   <Link
