@@ -15,9 +15,9 @@ export async function POST(request) {
       );
     }
     if (await bcrypt.compare(password, user.password)) {
-      const token = jwt.sign({email: user.email}, process.env.JWT_SECRET);
+      const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET);
       return new NextResponse(
-        JSON.stringify({ name: user.name, token: token,status: 200 })
+        JSON.stringify({ name: user.name, token: token, status: 200 })
       );
     } else {
       return new NextResponse(
@@ -26,5 +26,6 @@ export async function POST(request) {
     }
   } catch (err) {
     console.log(err);
+    return new NextResponse("Error signing in!");
   }
 }
