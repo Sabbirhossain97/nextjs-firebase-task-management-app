@@ -16,7 +16,7 @@ export default function ClearAll({ clearall, toggle }) {
         >
           <p
             onClick={clearall}
-            className="cursor-pointer font-semibold px-2 py-2 rounded-md border border-cyan-500 transition hover:bg-cyan-600"
+            className="cursor-pointer font-semibold px-2 py-2 rounded-md border bg-cyan-700 hover:bg-cyan-600 border-cyan-500 transition "
           >
             Clear tasks
           </p>

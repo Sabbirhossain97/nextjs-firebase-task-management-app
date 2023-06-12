@@ -138,7 +138,7 @@ export default function AllTasks({ data, setLoading }) {
                             setEditText(e.target.value);
                           }}
                           className="w-full text-sm text-gray-400 outline-none  font-semibold p-1 bg-inherit  border-cyan-700 placeholder-gray-400 placeholder:text-[12px]"
-                          placeholder="Edit item..."
+                          placeholder={currentItem[0].task}
                           autoFocus={true}
                         />
                       ) : (

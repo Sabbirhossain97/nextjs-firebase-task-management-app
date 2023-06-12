@@ -5,6 +5,7 @@ export async function GET() {
     connectMongo();
     return new Response("connected to mongodb!");
   } catch (err) {
+    console.log(err)
     return new Response("error connecting to database");
   }
 }

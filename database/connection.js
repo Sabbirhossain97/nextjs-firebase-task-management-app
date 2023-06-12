@@ -6,8 +6,6 @@ const connectMongo = async () => {
 
     if (connection.readyState == 1) {
       console.log("connected to database!");
-      // await mongoose.model("Todo").findOne()
-      // await mongoose.model("User").findOne();
     }
   } catch (err) {
     return Promise.reject(err);

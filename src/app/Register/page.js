@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import Loading from "../../../components/Loading";
 import { AiFillWarning } from "react-icons/ai";
+import toast, { Toaster } from "react-hot-toast";
 
 export default function Register() {
   const [name, setName] = useState("");
@@ -49,7 +50,10 @@ export default function Register() {
 
   useEffect(() => {
     if (message?.data === 200) {
-      router.push("/Login");
+      setTimeout(() => {
+        router.push("/Login");
+      }, 2500);
+      toast.success("Registration successfull");
     } else if (message?.data === 404) {
       setTimeout(() => {
         setError("Email already exists!");
@@ -57,8 +61,20 @@ export default function Register() {
     }
   }, [message]);
 
+
   return (
     <div>
+      <Toaster
+        toastOptions={{
+          duration: 2000,
+          style: {
+            background: "rgb(30,41,59)",
+            color: "gray",
+            fontSize: "14px",
+          },
+        }}
+      />
+
       <section className=" bg-slate-900">
         <motion.div
           className="flex flex-col h-screen w-10/12 md:w-full items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0"
@@ -150,6 +166,7 @@ export default function Register() {
                 >
                   {loading ? <Loading /> : "Create an account"}
                 </button>
+
                 <p className="text-sm text-center font-semibold text-gray-500 dark:text-gray-400">
                   Already have an account?{" "}
                   <Link
@@ -161,6 +178,12 @@ export default function Register() {
                 </p>
               </div>
             </form>
+            {/* <button
+              onClick={notify}
+              className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-2 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center transition bg-cyan-600 hover:bg-cyan-700 dark:focus:ring-primary-800"
+            >
+              test
+            </button> */}
           </div>
         </motion.div>
       </section>

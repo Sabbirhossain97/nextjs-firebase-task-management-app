@@ -2,13 +2,12 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import axios from "axios";
-import "react-toastify/dist/ReactToastify.css";
-import { ToastContainer, toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { AiFillWarning } from "react-icons/ai";
 import Loading from "../../../components/Loading";
 import Cookies from "js-cookie";
+import toast, { Toaster } from "react-hot-toast";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -19,7 +18,7 @@ export default function Login() {
   const router = useRouter();
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (email | password === "") {
+    if (email | (password === "")) {
       return;
     }
     try {
@@ -59,12 +58,25 @@ export default function Login() {
     } else if (message?.data.status === 200) {
       localStorage.setItem("token", message?.data.token);
       Cookies.set("isLoggedIn", true);
-      router.push("/Home");
+      setTimeout(() => {
+        router.push("/Home");
+      }, 2000);
+      toast.success("Login Successful!");
     }
   }, [message]);
 
   return (
     <div>
+      <Toaster
+        toastOptions={{
+          duration: 2000,
+          style: {
+            background: "rgb(30,41,59)",
+            color: "gray",
+            fontSize: "14px",
+          },
+        }}
+      />
       <section className=" bg-slate-900">
         <motion.div
           className="flex flex-col h-screen w-10/12 md:w-full items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0"
@@ -114,7 +126,7 @@ export default function Login() {
                 <AnimatePresence>
                   {error ? (
                     <motion.p
-                      className="mt-1 text-sm text-center border border-red-500 text-red-600 flex flex-row justify-center w-full rounded-md  p-2"
+                      className={`mt-1 text-sm text-center border border-red-500 text-red-600 flex flex-row justify-center w-full rounded-md p-2`}
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 10 }}
@@ -134,7 +146,6 @@ export default function Login() {
                 >
                   {loading ? <Loading /> : "Sign in"}
                 </button>
-                <ToastContainer />
                 <p className="text-sm text-center font-semibold text-gray-500 dark:text-gray-400">
                   Didn't have an account?
                   <Link
