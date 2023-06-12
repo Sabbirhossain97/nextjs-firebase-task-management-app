@@ -53,6 +53,7 @@ export default function Home() {
   useEffect(() => {
     const fetchTasks = async () => {
       try {
+        setLoading(true)
         const response = await axios.post(
           "/api/allTasks",
           {
@@ -72,6 +73,8 @@ export default function Home() {
         setData(result);
       } catch (err) {
         console.log("error fetching documents from db", err);
+      } finally {
+        setLoading(false)
       }
     };
     fetchTasks();
