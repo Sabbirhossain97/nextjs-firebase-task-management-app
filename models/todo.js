@@ -6,7 +6,10 @@ const todoSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  completedAt: Date,
+  completedAt: {
+    type: Date,
+    default: Date.now(),
+  },
   user_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",

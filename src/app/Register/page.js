@@ -7,6 +7,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import Loading from "../../../components/Loading";
 import { AiFillWarning } from "react-icons/ai";
 import toast, { Toaster } from "react-hot-toast";
+import { AiOutlineMail } from "react-icons/ai";
+import { AiFillEyeInvisible } from "react-icons/ai";
+import { AiFillEye } from "react-icons/ai";
 
 export default function Register() {
   const [name, setName] = useState("");
@@ -15,6 +18,8 @@ export default function Register() {
   const [message, setMessage] = useState(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [visibility, setVisiblity] = useState(false);
+
   const router = useRouter();
 
   const handleSubmit = async (e) => {
@@ -101,7 +106,6 @@ export default function Register() {
                   </label>
                   <input
                     className=" border border-gray-300 text-gray-500 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 bg-slate-800 dark:border-gray-600 dark:placeholder-gray-700 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="john doe"
                     required
                     onChange={(e) => {
                       setName(e.target.value);
@@ -116,16 +120,18 @@ export default function Register() {
                   >
                     Email
                   </label>
-                  <input
-                    type="email"
-                    placeholder="johndoe@gmail.com"
-                    className={`border text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 bg-slate-800 border-gray-600 dark:placeholder-gray-700 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500`}
-                    required
-                    onChange={(e) => {
-                      setEmail(e.target.value);
-                      setError("");
-                    }}
-                  />
+                  <div className="relative ">
+                    <input
+                      type="email"
+                      className={`border text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 bg-slate-800 border-gray-600 dark:placeholder-gray-700 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500`}
+                      required
+                      onChange={(e) => {
+                        setEmail(e.target.value);
+                        setError("");
+                      }}
+                    />
+                    <AiOutlineMail className="absolute top-3.5 right-2 text-gray-600" />
+                  </div>
                 </div>
                 <div>
                   <label
@@ -134,15 +140,29 @@ export default function Register() {
                   >
                     Password
                   </label>
-                  <input
-                    placeholder="••••••••"
-                    className={`border  text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 bg-slate-800  border-gray-600 dark:placeholder-gray-700 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500`}
-                    required
-                    onChange={(e) => {
-                      setPassword(e.target.value);
-                      setError("");
-                    }}
-                  />
+                  <div className="relative ">
+                    <input
+                      type={visibility ? "text" : "password"}
+                      className={`border  text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 bg-slate-800  border-gray-600 dark:placeholder-gray-700 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500`}
+                      required
+                      onChange={(e) => {
+                        setPassword(e.target.value);
+                        setError("");
+                      }}
+                    />
+                    {visibility ? (
+                      <AiFillEye
+                        onClick={() => setVisiblity(!visibility)}
+                        className="cursor-pointer absolute top-3.5 right-2 text-gray-600"
+                      />
+                    ) : (
+                      <AiFillEyeInvisible
+                        onClick={() => setVisiblity(!visibility)}
+                        className="cursor-pointer absolute top-3.5 right-2 text-gray-600"
+                        title="show password"
+                      />
+                    )}
+                  </div>
                 </div>
                 <AnimatePresence>
                   {error ? (

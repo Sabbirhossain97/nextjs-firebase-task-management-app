@@ -32,7 +32,7 @@ export default function User({ user }) {
           <span className="ml-2 text-md">{user?.data.name}</span>
           {open ? (
             <svg
-              class="w-4 h-4 mx-1.5 "
+              className="w-4 h-4 mx-1.5 "
               aria-hidden="true"
               fill="currentColor"
               viewBox="0 0 20 20"

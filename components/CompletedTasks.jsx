@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { BiUndo } from "react-icons/bi";
 import axios from "axios";
 import { BsCheckLg } from "react-icons/bs";
+import moment from "moment";
 
 export default function CompletedTasks({ user, setUndo, undo }) {
   const [completedTasks, setCompletedTasks] = useState(null);
@@ -62,7 +63,7 @@ export default function CompletedTasks({ user, setUndo, undo }) {
       setLoading(false);
     }
   };
-
+  console.log(completedTasks);
 
   return (
     <div>
@@ -80,11 +81,12 @@ export default function CompletedTasks({ user, setUndo, undo }) {
                   transition={{ delay: 0.0 }}
                 >
                   <div className="flex gap-2">
-                    <div className="w-full h-10 bg-transparent transition border border-cyan-600 rounded-[7px] flex justify-between items-center px-3">
+                    <div className="relative w-full h-10 bg-transparent transition border border-cyan-600 rounded-[7px] flex justify-between items-center px-3">
                       <div className="font-semibold decoration-white flex items-center text-sm mr-1 ">
                         <BsCheckLg className="text-lg text-green-400" />
                         <span className="ml-2 text-gray-500">{item.task}</span>
                       </div>
+
                       <p
                         onClick={() => redoTasks(item._id)}
                         className={`cursor-pointer decoration-white text-[13px] mt-0.5 ml-2 text-gray-300 font-semibold`}

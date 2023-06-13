@@ -8,13 +8,16 @@ import { AiFillWarning } from "react-icons/ai";
 import Loading from "../../../components/Loading";
 import Cookies from "js-cookie";
 import toast, { Toaster } from "react-hot-toast";
-
+import { AiOutlineMail } from "react-icons/ai";
+import { AiFillEyeInvisible } from "react-icons/ai";
+import { AiFillEye } from "react-icons/ai";
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [visibility, setVisiblity] = useState(false);
   const router = useRouter();
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -91,20 +94,22 @@ export default function Login() {
                 Sign In
               </h1>
               <div className="space-y-4 md:space-y-6">
-                <div>
+                <div className="">
                   <label
                     htmlFor="email"
                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                   >
                     Email
                   </label>
-                  <input
-                    type="email"
-                    placeholder="johndoe@gmail.com"
-                    className=" border text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 bg-slate-800 border-gray-600 placeholder-gray-700 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    required
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
+                  <div className="relative ">
+                    <input
+                      type="email"
+                      className="relative border text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 bg-slate-800 border-gray-600 placeholder-gray-700 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      required
+                      onChange={(e) => setEmail(e.target.value)}
+                    />
+                    <AiOutlineMail className="absolute top-3.5 right-2 text-gray-600" />
+                  </div>
                 </div>
                 <div>
                   <label
@@ -113,15 +118,30 @@ export default function Login() {
                   >
                     Password
                   </label>
-                  <input
-                    className={`border text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 bg-slate-800 border-gray-600
+                  <div className="relative ">
+                    <input
+                      type={visibility ? "text" : "password"}
+                      className={`border text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 bg-slate-800 border-gray-600
                      dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500`}
-                    required
-                    onChange={(e) => {
-                      setPassword(e.target.value);
-                      setError("");
-                    }}
-                  />
+                      required
+                      onChange={(e) => {
+                        setPassword(e.target.value);
+                        setError("");
+                      }}
+                    />
+                    {visibility ? (
+                      <AiFillEye
+                        onClick={() => setVisiblity(!visibility)}
+                        className="cursor-pointer absolute top-3.5 right-2 text-gray-600"
+                      />
+                    ) : (
+                      <AiFillEyeInvisible
+                        onClick={() => setVisiblity(!visibility)}
+                        className="cursor-pointer absolute top-3.5 right-2 text-gray-600"
+                        title="show password"
+                      />
+                    )}
+                  </div>
                 </div>
                 <AnimatePresence>
                   {error ? (

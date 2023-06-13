@@ -14,7 +14,7 @@ export default function AllTasks({ data, setLoading }) {
   const [currentItem, setCurrentItem] = useState(null);
   const [completedTodo, setCompletedTodo] = useState(null);
   const [edit, setEdit] = useState(false);
-
+  const [check, setCheck] = useState(false);
   const editTodo = async (id) => {
     try {
       setLoading(true);
@@ -126,10 +126,15 @@ export default function AllTasks({ data, setLoading }) {
                           id={key}
                           onClick={() => {
                             handleCheckedItem(key);
+                            setCheck(true);
                           }}
                           title="mark as complete"
                         >
-                          <BsCircle className="text-sm transition text-cyan-500 hover:ring-1 ring-cyan-500 rounded-full" />
+                          {check && item._id === completedTodo[0]._id ? (
+                            <BsCheckLg className="text-green-500" />
+                          ) : (
+                            <BsCircle className="text-sm transition text-cyan-500 hover:ring-1 ring-cyan-500 rounded-full" />
+                          )}
                         </span>
                       </div>
                       {edit && item._id === currentItem[0]._id ? (
@@ -159,7 +164,6 @@ export default function AllTasks({ data, setLoading }) {
                           {item.task}
                         </motion.p>
                       )}
-                      {/*  */}
                     </div>
                     <motion.button
                       initial={{ opacity: 0, y: 5 }}

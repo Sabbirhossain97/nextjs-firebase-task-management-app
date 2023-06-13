@@ -4,12 +4,11 @@ import moment from "moment";
 export async function PUT(request, context) {
   try {
     const time = moment().format("MMMM Do YYYY, h:mm:ss a");
-    console.log(time)
     const { id } = context.params;
     const completedTask = await request.json();
     await Todo.findByIdAndUpdate(id, {
       completed: true,
-      comnpletedAt: Date.now()
+      comnpletedAt: time,
     });
     return new Response("successfully updated todo!");
   } catch (err) {
