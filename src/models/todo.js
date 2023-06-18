@@ -8,7 +8,6 @@ const todoSchema = new mongoose.Schema({
   },
   completedAt: {
     type: Date,
-    default: Date.now(),
   },
   user_id: {
     type: mongoose.Schema.Types.ObjectId,

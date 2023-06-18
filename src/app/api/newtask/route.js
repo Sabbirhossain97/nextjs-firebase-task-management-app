@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import Todo from "../../../../models/todo";
+import Todo from "../../../models/todo";
 
 export async function POST(request) {
   try {

@@ -63,7 +63,7 @@ export default function Login() {
       Cookies.set("isLoggedIn", true);
       setTimeout(() => {
         router.push("/Home");
-      }, 2000);
+      }, 1500);
       toast.success("Login Successful!");
     }
   }, [message]);
@@ -104,6 +104,7 @@ export default function Login() {
                   <div className="relative ">
                     <input
                       type="email"
+                      id="email"
                       className="relative border text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 bg-slate-800 border-gray-600 placeholder-gray-700 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                       required
                       onChange={(e) => setEmail(e.target.value)}
@@ -113,7 +114,7 @@ export default function Login() {
                 </div>
                 <div>
                   <label
-                    htmlFor="confirm-password"
+                    htmlFor="password"
                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                   >
                     Password
@@ -121,6 +122,7 @@ export default function Login() {
                   <div className="relative ">
                     <input
                       type={visibility ? "text" : "password"}
+                      id="password"
                       className={`border text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 bg-slate-800 border-gray-600
                      dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500`}
                       required

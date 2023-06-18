@@ -1,4 +1,4 @@
-import connectMongo from "../../../../database/connection";
+import connectMongo from "../../../database/connection";
 
 export async function GET() {
       try {

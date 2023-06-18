@@ -1,4 +1,4 @@
-import User from "../../../../models/user";
+import User from "../../../models/user";
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 import { NextResponse } from "next/server";
@@ -15,7 +15,10 @@ export async function POST(request) {
       );
     }
     if (await bcrypt.compare(password, user.password)) {
-      const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET);
+      const token = jwt.sign(
+        { email: user.email },
+        process.env.NEXT_PUBLIC_JWT_SECRET
+      );
       return new NextResponse(
         JSON.stringify({ name: user.name, token: token, status: 200 })
       );

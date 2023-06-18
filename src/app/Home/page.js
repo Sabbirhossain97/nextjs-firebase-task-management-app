@@ -11,6 +11,7 @@ import { AiOutlineSend } from "react-icons/ai";
 import SimpleBar from "simplebar-react";
 import "simplebar-react/dist/simplebar.min.css";
 import ClearAll from "../../../components/ClearAll";
+import toast, { Toaster } from "react-hot-toast";
 
 export default function Home() {
   const [todo, setTodo] = useState("");
@@ -18,42 +19,40 @@ export default function Home() {
   const [data, setData] = useState([]);
   const [toggle, setToggle] = useState(false);
   const [user, setUser] = useState(null);
-  const [undo, setUndo]= useState(false)
+  const [undo, setUndo] = useState(false);
 
-  const handleTodo = async () => {
-    if (todo === "") {
-      return;
-    } else {
-      try {
-        setLoading(true);
-        await axios
-          .post(
-            "/api/newtask",
-            {
-              newTask: todo,
-              userId: user?.data._id,
+  const handleTodo = async (e) => {
+    e.preventDefault();
+    try {
+      setLoading(true);
+      await axios
+        .post(
+          "/api/newtask",
+          {
+            newTask: todo,
+            userId: user?.data._id,
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
             },
-            {
-              headers: {
-                "Content-Type": "application/json",
-              },
-            }
-          )
-          .then((data) => console.log(data))
-          .catch((err) => console.log(err));
-      } catch (err) {
-        console.log(err);
-      } finally {
-        setTodo("");
-        setLoading(false);
-      }
+          }
+        )
+        .then((data) => console.log(data))
+        .catch((err) => console.log(err));
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setTodo("");
+      setLoading(false);
+      toast.success("Todo added!");
     }
   };
 
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        setLoading(true)
+        setLoading(true);
         const response = await axios.post(
           "/api/allTasks",
           {
@@ -74,11 +73,11 @@ export default function Home() {
       } catch (err) {
         console.log("error fetching documents from db", err);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
     };
     fetchTasks();
-  }, [loading,undo]);
+  }, [loading, undo, user]);
 
   useEffect(() => {
     const getUserData = async () => {
@@ -109,11 +108,23 @@ export default function Home() {
       console.log(err);
     } finally {
       setLoading(false);
+      toast.success("cleared all tasks!");
+
     }
   };
 
   return (
     <div>
+      <Toaster
+        toastOptions={{
+          duration: 2000,
+          style: {
+            background: "rgb(30,41,59)",
+            color: "gray",
+            fontSize: "14px",
+          },
+        }}
+      />
       <motion.div
         className="relative transition-[height] flex justify-center items-center min-h-screen bg-gray-100 dark:bg-gradient-to-br from-slate-800 to-slate-900 "
         initial={{ opacity: 0 }}
@@ -129,7 +140,10 @@ export default function Home() {
             <p className=" font-semibold">{moment().format("h:mm a")}</p>
           </div>
 
-          <div className="w-full mt-16 flex flex-row text-sm text-center justify-center ">
+          <form
+            onSubmit={handleTodo}
+            className="w-full mt-16 flex flex-row text-sm text-center justify-center "
+          >
             <div className="w-full">
               <input
                 className=" w-full  text-gray-400  font-semibold outline-none p-2 bg-inherit border-b  border-cyan-600 placeholder-teal-700 dark:placeholder-gray-400 placeholder:text-[14px]"
@@ -140,12 +154,12 @@ export default function Home() {
               />
             </div>
             <button
-              onClick={handleTodo}
+              type="submit"
               className="flex justify-center items-center w-[60px] text-md  h-8 mt-2 bg-cyan-600 hover:bg-cyan-500 text-center transition text-white rounded-md ml-3"
             >
               <AiOutlineSend className="text-lg text-white" />
             </button>
-          </div>
+          </form>
           {data ? (
             <motion.div
               className="mt-6 h-[50px]  flex justify-between items-end"
@@ -189,7 +203,15 @@ export default function Home() {
               )}
             </div>
           </SimpleBar>
-         {data.length > 0 ?  <ClearAll clearall={clearAllTasks} toggle={toggle}/> : "" }
+          {data.length > 0 ? (
+            <ClearAll
+              clearall={clearAllTasks}
+              toggle={toggle}
+              loading={loading}
+            />
+          ) : (
+            ""
+          )}
         </div>
       </motion.div>
     </div>

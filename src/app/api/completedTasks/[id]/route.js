@@ -1,11 +1,10 @@
-import Todo from "../../../../../models/todo";
-import moment from "moment";
+import Todo from "../../../../models/todo";
 
 export async function PUT(request, context) {
   try {
-    const time = moment().format("MMMM Do YYYY, h:mm:ss a");
     const { id } = context.params;
     const completedTask = await request.json();
+    const { time } = completedTask;
     await Todo.findByIdAndUpdate(id, {
       completed: true,
       comnpletedAt: time,

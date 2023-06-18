@@ -1,4 +1,4 @@
-import User from "../../../../models/user";
+import User from "../../../models/user";
 const bcrypt = require("bcryptjs");
 
 export async function POST(request) {

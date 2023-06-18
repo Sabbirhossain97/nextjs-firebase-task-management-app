@@ -107,6 +107,8 @@ export default function Register() {
                   <input
                     className=" border border-gray-300 text-gray-500 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 bg-slate-800 dark:border-gray-600 dark:placeholder-gray-700 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     required
+                    id="name"
+                    type="text"
                     onChange={(e) => {
                       setName(e.target.value);
                       setError("");
@@ -123,6 +125,7 @@ export default function Register() {
                   <div className="relative ">
                     <input
                       type="email"
+                      id="email"
                       className={`border text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 bg-slate-800 border-gray-600 dark:placeholder-gray-700 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500`}
                       required
                       onChange={(e) => {
@@ -135,7 +138,7 @@ export default function Register() {
                 </div>
                 <div>
                   <label
-                    htmlFor="confirm-password"
+                    htmlFor="password"
                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                   >
                     Password
@@ -143,6 +146,7 @@ export default function Register() {
                   <div className="relative ">
                     <input
                       type={visibility ? "text" : "password"}
+                      id="password"
                       className={`border  text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 bg-slate-800  border-gray-600 dark:placeholder-gray-700 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500`}
                       required
                       onChange={(e) => {

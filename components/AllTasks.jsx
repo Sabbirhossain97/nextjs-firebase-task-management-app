@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { AiFillDelete } from "react-icons/ai";
 import { BiEditAlt } from "react-icons/bi";
 import { BsCheckLg } from "react-icons/bs";
@@ -7,7 +7,8 @@ import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
 import { BsCircle } from "react-icons/bs";
-import { BsCheckCircle } from "react-icons/bs";
+import moment from "moment";
+import toast, { Toaster } from "react-hot-toast";
 
 export default function AllTasks({ data, setLoading }) {
   const [editText, setEditText] = useState("");
@@ -15,6 +16,7 @@ export default function AllTasks({ data, setLoading }) {
   const [completedTodo, setCompletedTodo] = useState(null);
   const [edit, setEdit] = useState(false);
   const [check, setCheck] = useState(false);
+
   const editTodo = async (id) => {
     try {
       setLoading(true);
@@ -43,6 +45,7 @@ export default function AllTasks({ data, setLoading }) {
       console.log(err);
     } finally {
       setLoading(false);
+      toast.success("deleted!");
     }
   };
 
@@ -76,16 +79,21 @@ export default function AllTasks({ data, setLoading }) {
   const completedTasks = async (id) => {
     try {
       setLoading(true);
-      await axios.put(`/api/completedTasks/${id}`, {
-        headers: { "Content-Type": "application/json" },
-      });
+      await axios.put(
+        `/api/completedTasks/${id}`,
+        {
+          time: moment().startOf("minute").fromNow(),
+        },
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
     } catch (err) {
       console.log(err);
     } finally {
       setLoading(false);
     }
   };
-
   return (
     <>
       <ul className=" transition duration-300 ease-out">
@@ -103,7 +111,8 @@ export default function AllTasks({ data, setLoading }) {
                 alt="emptytodo"
                 width={200}
                 height={200}
-                priority
+                priority={true}
+                blurDataURL={"/emptytodo.png"}
               />
               <div className="py-4">Add some tasks</div>
             </motion.div>
@@ -112,14 +121,14 @@ export default function AllTasks({ data, setLoading }) {
               {data.map((item, key) => (
                 <motion.li
                   className=" mt-4"
-                  key={key}
+                  key={item._id}
                   initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, x: -15 }}
                   transition={{ delay: 0.25 }}
                 >
                   <div className="flex gap-2">
-                    <div className="w-11/12 h-10 bg-transparent transition border border-cyan-600 rounded-[7px] flex justify-start items-center px-3">
+                    <div className="relative w-11/12 h-auto p-2 bg-transparent transition border border-cyan-600 rounded-[7px] flex justify-start items-center px-3">
                       <div className="flex items-center mr-1">
                         <span
                           className="cursor-pointer"
@@ -131,7 +140,14 @@ export default function AllTasks({ data, setLoading }) {
                           title="mark as complete"
                         >
                           {check && item._id === completedTodo[0]._id ? (
-                            <BsCheckLg className="text-green-500" />
+                            <motion.span
+                              initial={{ opacity: 0, y: 10 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0, x: 10 }}
+                              transition={{ delay: 0.25 }}
+                            >
+                              <BsCheckLg className="text-green-500" />
+                            </motion.span>
                           ) : (
                             <BsCircle className="text-sm transition text-cyan-500 hover:ring-1 ring-cyan-500 rounded-full" />
                           )}
@@ -142,8 +158,8 @@ export default function AllTasks({ data, setLoading }) {
                           onChange={(e) => {
                             setEditText(e.target.value);
                           }}
-                          className="w-full text-sm text-gray-400 outline-none  font-semibold p-1 bg-inherit  border-cyan-700 placeholder-gray-400 placeholder:text-[12px]"
-                          placeholder={currentItem[0].task}
+                          className="w-full text-sm h-auto text-gray-400 outline-none px-2 font-semibold bg-inherit  border-cyan-700 placeholder-gray-400 placeholder:text-[12px]"
+                          placeholder="edit todo..."
                           autoFocus={true}
                         />
                       ) : (
