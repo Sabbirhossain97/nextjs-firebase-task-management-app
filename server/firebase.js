@@ -21,13 +21,13 @@ import {
 import toast from "react-hot-toast";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyCAW2rwdxMXZUt_gIytAzMy1VRbgcBbTDw",
-    authDomain: "to-do-3e649.firebaseapp.com",
-    projectId: "to-do-3e649",
-    storageBucket: "to-do-3e649.appspot.com",
-    messagingSenderId: "500513856254",
-    appId: "1:500513856254:web:38ba2c7533ae807e71a3af",
-    measurementId: "G-JX2QT120T9"
+    apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+    authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+    projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+    storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+    appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+    measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
 };
 
 const app = initializeApp(firebaseConfig);
