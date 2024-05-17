@@ -10,204 +10,267 @@ import toast, { Toaster } from "react-hot-toast";
 import { AiOutlineMail } from "react-icons/ai";
 import { AiFillEyeInvisible } from "react-icons/ai";
 import { AiFillEye } from "react-icons/ai";
+import { FcGoogle } from "react-icons/fc";
+import { BsFacebook } from "react-icons/bs";
+import { signupSchema } from "../../../helpers/Form/signupSchema";
+import { Formik, Form, Field, ErrorMessage } from 'formik';
+import { registerWithEmailAndPassword, signInWithFacebook, signInWithGoogle } from "../../../server/firebase";
 
 export default function Register() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [message, setMessage] = useState(null);
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [visibility, setVisiblity] = useState(false);
+  const [visibility, setVisiblity] = useState({
+    password: false,
+    confirmPassword: false
+  });
+  const [loading, setLoading] = useState(false)
 
   const router = useRouter();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (name | email | (password === "")) {
-      return;
-    } else {
-      try {
-        setLoading(true);
-        await axios
-          .post(
-            "/api/register",
-            {
-              name: name,
-              email: email,
-              password: password,
-            },
-            {
-              headers: {
-                "Content-Type": "application/json",
-              },
-            }
-          )
-          .then((data) => setMessage(data))
-          .catch((err) => console.log(err));
-      } catch (err) {
-        console.log(err);
-      } finally {
-        setLoading(false);
-      }
-    }
+  const initialValues = {
+    username: '',
+    email: '',
+    password: '',
+    confirmPassword: ''
   };
 
-  useEffect(() => {
-    if (message?.data === 200) {
-      setTimeout(() => {
-        router.push("/Login");
-      }, 2500);
-      toast.success("Registration successfull");
-    } else if (message?.data === 404) {
-      setTimeout(() => {
-        setError("Email already exists!");
-      }, 1000);
+  const handleSubmit = async (values, { setSubmitting }) => {
+    const { username, email, password } = values
+    setLoading(true); 
+    try {
+      await registerWithEmailAndPassword(username, email, password);
+    } catch (error) {
+      console.error('Error registering user:', error.message);
+    } finally {
+      setLoading(false);
     }
-  }, [message]);
-
+    setSubmitting(false);
+  };
 
   return (
     <div>
-      <Toaster
-        toastOptions={{
-          duration: 2000,
-          style: {
-            background: "rgb(30,41,59)",
-            color: "gray",
-            fontSize: "14px",
-          },
-        }}
-      />
-
       <section className=" bg-slate-900">
         <motion.div
-          className="flex flex-col h-screen w-10/12 md:w-full items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0"
+          className="flex flex-col h-screen w-11/12 md:w-full items-center justify-center px-2 py-8 mx-auto md:h-screen lg:py-0"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ delay: 0.25 }}
+          transition={{ delay: 0 }}
         >
-          <div className="w-full rounded-lg shadow border md:mt-0 sm:max-w-md xl:p-0 bg-slate-800/50 border-gray-700">
-            <form
-              className="p-6 space-y-4 md:space-y-6 sm:p-8"
+          <div className="w-full rounded-lg shadow border md:mt-0 sm:max-w-[520px] md:max-w-lg xl:p-0 bg-slate-800/50 border-gray-700">
+            <Formik
+              initialValues={initialValues}
+              validationSchema={signupSchema}
               onSubmit={handleSubmit}
             >
-              <h1 className="text-xl text-center font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
-                Sign up
-              </h1>
-              <div className="space-y-4 md:space-y-6">
-                <div>
-                  <label
-                    htmlFor="name"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                  >
-                    Name
-                  </label>
-                  <input
-                    className=" border border-gray-300 text-gray-500 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 bg-slate-800 dark:border-gray-600 dark:placeholder-gray-700 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    required
-                    id="name"
-                    type="text"
-                    onChange={(e) => {
-                      setName(e.target.value);
-                      setError("");
-                    }}
-                  />
-                </div>
-                <div>
-                  <label
-                    htmlFor="email"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                  >
-                    Email
-                  </label>
-                  <div className="relative ">
-                    <input
-                      type="email"
-                      id="email"
-                      className={`border text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 bg-slate-800 border-gray-600 dark:placeholder-gray-700 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500`}
-                      required
-                      onChange={(e) => {
-                        setEmail(e.target.value);
-                        setError("");
-                      }}
-                    />
-                    <AiOutlineMail className="absolute top-3.5 right-2 text-gray-600" />
-                  </div>
-                </div>
-                <div>
-                  <label
-                    htmlFor="password"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                  >
-                    Password
-                  </label>
-                  <div className="relative ">
-                    <input
-                      type={visibility ? "text" : "password"}
-                      id="password"
-                      className={`border  text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 bg-slate-800  border-gray-600 dark:placeholder-gray-700 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500`}
-                      required
-                      onChange={(e) => {
-                        setPassword(e.target.value);
-                        setError("");
-                      }}
-                    />
-                    {visibility ? (
-                      <AiFillEye
-                        onClick={() => setVisiblity(!visibility)}
-                        className="cursor-pointer absolute top-3.5 right-2 text-gray-600"
-                      />
-                    ) : (
-                      <AiFillEyeInvisible
-                        onClick={() => setVisiblity(!visibility)}
-                        className="cursor-pointer absolute top-3.5 right-2 text-gray-600"
-                        title="show password"
-                      />
-                    )}
-                  </div>
-                </div>
-                <AnimatePresence>
-                  {error ? (
-                    <motion.p
-                      className="mt-1 text-sm text-center border border-red-500 text-red-600 flex flex-row justify-center w-full rounded-md p-2"
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 10 }}
-                      transition={{ delay: 0.25 }}
-                    >
-                      <AiFillWarning className="mt-0.5 " />{" "}
-                      <span className="ml-1">Email already exists!</span>
-                    </motion.p>
-                  ) : (
-                    ""
-                  )}
-                </AnimatePresence>
-                <button
-                  type="submit"
-                  className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-2 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center transition bg-cyan-600 hover:bg-cyan-700 dark:focus:ring-primary-800"
+              {({  errors, touched }) => (
+                <Form
+                  className="p-6 space-y-6 md:space-y-6 sm:p-8"
                 >
-                  {loading ? <Loading /> : "Create an account"}
-                </button>
+                  <h1 className="text-xl text-center font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+                    Sign up
+                  </h1>
+                  <div className="space-y-4 md:space-y-6">
+                    <div>
+                      <label
+                        htmlFor="name"
+                        className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                      >
+                        Name
+                      </label>
+                      <Field
+                        type="username"
+                        name='username'
+                        className={`${errors.email && touched.email ? 'border-cyan-600' : 'border-gray-600'
+                          } outline-none border sm:text-sm rounded-lg block w-full p-2.5 bg-slate-800 focus:border-cyan-500 text-white transition duration-300`}
+                        autoComplete="off"
+                     />
+                      <AnimatePresence>
+                        <ErrorMessage name="username" >
+                          {(message) => (
+                            <motion.div
+                              initial={{ opacity: 0, y: 10 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0, y: 10 }}
+                              transition={{ delay: 0.0 }}
+                              className="text-cyan-400 mt-2"
+                            >
+                              {message}
+                            </motion.div>
+                          )}
+                        </ErrorMessage>
+                      </AnimatePresence>
+                    </div>
+                    <div>
+                      <label
+                        htmlFor="email"
+                        className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                      >
+                        Email
+                      </label>
+                      <div className="relative ">
+                        <Field
+                          type="email"
+                          name='email'
+                          className={`${errors.email && touched.email ? 'border-cyan-600' : 'border-gray-600'
+                            } outline-none border sm:text-sm rounded-lg block w-full p-2.5 bg-slate-800 focus:border-cyan-500 text-white transition duration-300`}
+                          autoComplete="off"
+                        />
+                        <AiOutlineMail className="absolute text-xl top-3 right-2 text-gray-600" />
+                        <AnimatePresence>
+                          <ErrorMessage name="email" >
+                            {(message) => (
+                              <motion.div
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: 10 }}
+                                transition={{ delay: 0.0 }}
+                                className="text-cyan-400 mt-2"
+                              >
+                                {message}
+                              </motion.div>
+                            )}
+                          </ErrorMessage>
+                        </AnimatePresence>
+                      </div>
+                    </div>
+                    <div>
+                      <label
+                        htmlFor="password"
+                        className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                      >
+                        Password
+                      </label>
+                      <div className="relative ">
+                        <Field
+                          type={visibility.password ? "text" : "password"} a
+                          id="password"
+                          name="password"
+                          className={`${errors.password && touched.password ? 'border-cyan-600' : 'border-gray-600'
+                            } outline-none border sm:text-sm rounded-lg block w-full p-2.5 bg-slate-800 text-white focus:border-cyan-500 transition duration-300`}
+                          required
+                        />
+                        {visibility.password ? (
+                          <AiFillEye
+                            onClick={() => setVisiblity({ ...visibility, password: !visibility.password })}
+                            className="cursor-pointer text-xl absolute top-3 right-2 text-gray-600"
+                          />
+                        ) : (
+                          <AiFillEyeInvisible
+                            onClick={() => setVisiblity({ ...visibility, password: !visibility.password })}
+                            className="cursor-pointer text-xl absolute top-3 right-2 text-gray-600"
+                            title="show password"
+                          />
+                        )}
+                        <AnimatePresence>
+                          <ErrorMessage name="password" >
+                            {(message) => (
+                              <motion.div
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: 10 }}
+                                transition={{ delay: 0.0 }}
+                                className="text-cyan-400 mt-2"
+                              >
+                                {message}
+                              </motion.div>
+                            )}
+                          </ErrorMessage>
+                        </AnimatePresence>
+                      </div>
+                    </div>
+                    <div>
+                      <label
+                        htmlFor="confirmPassword"
+                        className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                      >
+                        Confirm Password
+                      </label>
+                      <div className="relative ">
+                        <Field
+                          type={visibility.confirmPassword ? "text" : "password"}
+                          id="confirmPassword"
+                          name="confirmPassword"
+                          className={`${errors.confirmPassword && touched.confirmPassword ? 'border-cyan-600' : 'border-gray-600'
+                            } outline-none border sm:text-sm rounded-lg block w-full p-2.5 bg-slate-800 text-white focus:border-cyan-500 transition duration-300`}
+                          required
+                        />
+                        {visibility.confirmPassword ? (
+                          <AiFillEye
+                            onClick={() => setVisiblity({ ...visibility, confirmPassword: !visibility.confirmPassword })}
+                            className="cursor-pointer text-xl absolute top-3 right-2 text-gray-600"
+                          />
+                        ) : (
+                          <AiFillEyeInvisible
+                            onClick={() => setVisiblity({ ...visibility, confirmPassword: !visibility.confirmPassword })}
+                            className="cursor-pointer text-xl absolute top-3 right-2 text-gray-600"
+                            title="show password"
+                          />
+                        )}
+                        <AnimatePresence>
+                          <ErrorMessage name="confirmPassword" >
+                            {(message) => (
+                              <motion.div
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: 10 }}
+                                transition={{ delay: 0.0 }}
+                                className="text-cyan-400 mt-2"
+                              >
+                                {message}
+                              </motion.div>
+                            )}
+                          </ErrorMessage>
+                        </AnimatePresence>
+                      </div>
+                    </div>
 
-                <p className="text-sm text-center font-semibold text-gray-500 dark:text-gray-400">
-                  Already have an account?{" "}
-                  <Link
-                    href="/Login"
-                    className="font-medium text-primary-600 hover:underline text-cyan-500"
-                  >
-                    Login
-                  </Link>
-                </p>
-              </div>
-            </form>
-            {/* <button
-              onClick={notify}
-              className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-2 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center transition bg-cyan-600 hover:bg-cyan-700 dark:focus:ring-primary-800"
-            >
-              test
-            </button> */}
+                    <div className="pt-2">
+                      <button
+                        type="submit"
+                        className="w-full flex justify-center items-center gap-2 text-white bg-primary-600 hover:bg-primary-700 focus:ring-2 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center transition bg-cyan-600 hover:bg-cyan-700 dark:focus:ring-primary-800"
+                      >
+                        {loading ? <> <Loading />Creating...</> : 'Create an account'} 
+                      </button>
+                    </div>
+                    <p className="text-sm text-center font-semibold text-white">
+                      Already have an account?{" "}
+                      <Link
+                        href="/Login"
+                        className="font-medium text-primary-600 hover:underline text-cyan-500"
+                      >
+                        Login
+                      </Link>
+                    </p>
+                    <div className="my-4 flex items-center before:mt-0.5 before:flex-1 before:border-t before:border-gray-600 after:mt-0.5 after:flex-1 after:border-t after:border-gray-600">
+                      <p className="mx-4 mb-0 text-center font-semibold text-white">
+                        or
+                      </p>
+                    </div>
+                    <div className="flex flex-row flex-wrap sm:flex-nowrap gap-4 sm:gap-0 w-full ">
+                      <div className="flex items-center justify-center h-[52px] w-full sm:w-1/2 ">
+                        <button
+                          type="button"
+                          onClick={signInWithGoogle}
+                          className="w-full whitespace-nowrap flex items-center justify-center transition duration-300 h-[52px] bg-slate-800 rounded-lg  px-6 py-2 border border-gray-600 text-sm font-medium text-white hover:border-cyan-500 hover:bg-slate-900"
+                        >
+                          <FcGoogle className="text-xl" />
+                          <span className="ml-2 text-sm">Sign in with Google</span>
+                        </button>
+                      </div>
+                      <div className="flex items-center justify-start h-[52px] w-full sm:w-1/2 ml-0 sm:ml-4">
+                        <button
+                          type="button"
+                          onClick={signInWithFacebook}
+                          className="flex whitespace-nowrap w-full items-center justify-center transition duration-300 h-[52px] bg-slate-800 rounded-lg  px-6 py-2 border border-gray-600 text-sm font-medium text-white hover:border-cyan-500 hover:bg-slate-900"
+                        >
+                          <BsFacebook className="text-xl text-[#1778f2]" />
+                          <span className="ml-2">Sign in with Facebook</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </Form>
+              )}
+            </Formik>
           </div>
         </motion.div>
       </section>
