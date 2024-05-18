@@ -31,7 +31,7 @@ export default function User({ currentUser }) {
           <span className="ml-2 text-md">{currentUser?.displayName}</span>
         </div>
         <div onClick={handleLogOut} className="cursor-pointer flex items-center gap-1 transition hover:text-cyan-500">
-          <MdLogout className="text-xl"/>
+          <MdLogout className="text-xl text-cyan-400"/>
           <p className="font-semibold py-1  ">
             <span
               className=" text-sm whitespace-nowrap"

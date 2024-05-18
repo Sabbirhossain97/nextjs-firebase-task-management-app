@@ -3,13 +3,11 @@ import { useEffect, useState } from "react";
 import moment from "moment/moment";
 import { motion } from "framer-motion";
 import AllTasks from "../../../components/AllTasks";
-import CompletedTasks from "../../../components/CompletedTasks";
 import Header from "../common/header";
 import User from "../../../components/User";
 import { AiOutlineSend } from "react-icons/ai";
 import SimpleBar from "simplebar-react";
 import "simplebar-react/dist/simplebar.min.css";
-import ClearAll from "../../../components/ClearAll";
 import useAuth from "../../../helpers/hooks/useAuth";
 import { addTodos } from "../../../services/addTodo";
 import { v4 as uuidv4 } from 'uuid';
@@ -24,6 +22,7 @@ export default function Home() {
   const [undo, setUndo] = useState(false);
   const [currentTime, setCurrentTime] = useState('');
   const currentUser = useAuth()
+  const currentDate = moment().format("MMMM Do YYYY")
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -40,12 +39,19 @@ export default function Home() {
         id: uuidv4(),
         title: todo,
         status: "pending",
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
+        createdAt: `${currentDate + " " + currentTime}`,
+        updatedAt: `${currentDate + " " + currentTime}`,
         priority: "high",
         userId: currentUser.uid,
       }
-      addTodos(currentUser, payload)
+      try {
+        addTodos(currentUser, payload)
+      }
+      catch (error) {
+        console.error(error)
+      } finally {
+        setTodo("")
+      }
     }
   }
 
@@ -85,7 +91,6 @@ export default function Home() {
     getWishlistData();
   }, [currentUser]);
 
-
   return (
     <div>
       <motion.div
@@ -99,9 +104,9 @@ export default function Home() {
         <User
           currentUser={currentUser}
         />
-        <div className="h-[700px] mt-10 transition-all w-11/12 md:w-3/4 lg:w-2/3 xl:w-2/3 2xl:w-1/3  bg-slate-900  rounded-lg p-10 drop-shadow-md shadow-cyan-800">
+        <div className="h-[700px] mt-10 transition-all w-11/12 md:w-3/4 lg:w-2/3 xl:w-2/3 2xl:w-1/2  bg-slate-900  rounded-lg p-10 drop-shadow-md shadow-cyan-800">
           <div className="mt-3 text-sm  text-white flex justify-between items-center">
-            <p className=" font-semibold">{moment().format("MMMM Do YYYY")}</p>
+            <p className=" font-semibold">{currentDate}</p>
             <p className=" font-semibold">{currentTime}</p>
           </div>
 
@@ -111,7 +116,7 @@ export default function Home() {
           >
             <div className="w-full">
               <input
-                className=" w-full  text-gray-400  font-semibold outline-none p-2 bg-inherit border-b  border-cyan-600 placeholder-teal-700 dark:placeholder-gray-400 placeholder:text-[14px]"
+                className=" w-full text-gray-400  font-semibold outline-none p-2 bg-inherit border-b  border-cyan-600 placeholder-teal-700 dark:placeholder-gray-400 placeholder:text-[14px]"
                 placeholder="What needs to be done today?"
                 value={todo}
                 onChange={(e) => setTodo(e.target.value)}
@@ -125,58 +130,59 @@ export default function Home() {
               <AiOutlineSend className="text-lg text-white" />
             </button>
           </form>
-          {todoList ? (
-            <motion.div
-              className="mt-6 h-[50px]  flex justify-between items-end"
-              initial={{ opacity: 0, y: 10 }}
+
+          <div className="mt-6 flex flex-wrap gap-10">
+            <p className="text-gray-400">
+              Total
+              <motion.span
+                initial={{ opacity: 0, y: 5 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, x: 5 }}
+                transition={{ delay: 0.25 }}
+                className="ml-2 px-3 py-[1px] text-sm text-white bg-cyan-500 rounded-md">{todoList.length}
+              </motion.span>
+            </p>
+            <p
+              initial={{ opacity: 0, y: 5 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, x: 10 }}
-              transition={{ delay: 0.5 }}
-            >
-              <div className="flex flex-row border  border-cyan-700 rounded h-8 ">
-                <p
-                  onClick={() => setToggle(false)}
-                  className={`cursor-pointer text-sm font-semibold p-1 px-3 ${toggle ? "" : " bg-cyan-700"
-                    } hover:bg-cyan-500  transition`}
-                >
-                  Current tasks
-                </p>
-                <p
-                  onClick={() => setToggle(true)}
-                  className={`cursor-pointer text-sm font-semibold p-1 px-2 py-1 ${toggle ? " bg-cyan-700 text-white" : ""
-                    } hover:bg-cyan-500   transition`}
-                >
-                  Completed tasks
-                </p>
-              </div>
-            </motion.div>
-          ) : (
-            ""
-          )}
-          <SimpleBar className="h-[300px] mt-4">
-            <div className=" mt-6">
-              {toggle ? (
-                <CompletedTasks user={user} undo={undo} setUndo={setUndo} />
-              ) : (
-                <AllTasks
-                  user={currentUser}
-                  todoList={todoList}
-                  loading={loading}
-                  setLoading={setLoading}
-                />
-              )}
+              exit={{ opacity: 0, x: 5 }}
+              transition={{ delay: 0.25 }}
+              className="text-gray-400">
+              Pending
+              <motion.span
+                initial={{ opacity: 0, y: 5 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, x: 5 }}
+                transition={{ delay: 0.25 }}
+                className="ml-2 px-3 py-[1px] text-sm text-white bg-cyan-500 rounded-md">{todoList.length - todoList.filter((todo) => todo.status === "completed").length}
+              </motion.span>
+            </p>
+            <p
+              initial={{ opacity: 0, y: 5 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, x: 5 }}
+              transition={{ delay: 0.25 }} className="text-gray-400">
+              Completed
+              <motion.span
+                initial={{ opacity: 0, y: 5 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, x: 5 }}
+                transition={{ delay: 0.25 }}
+                className="ml-2 px-3 py-[1px] text-sm text-white bg-cyan-500 rounded-md">{todoList.filter((todo) => todo.status === "completed").length}
+              </motion.span>
+            </p>
+
+          </div>
+          <SimpleBar className="h-[400px] mt-2">
+            <div className="mt-4">
+              <AllTasks
+                user={currentUser}
+                todoList={todoList}
+                loading={loading}
+                setLoading={setLoading}
+              />
             </div>
           </SimpleBar>
-          {todoList.length > 0 ? (
-            // <ClearAll
-            //   clearall={clearAllTasks}
-            //   toggle={toggle}
-            //   loading={loading}
-            // />
-            ""
-          ) : (
-            ""
-          )}
         </div>
       </motion.div>
     </div>
