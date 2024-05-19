@@ -9,10 +9,12 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "antd": "^5.17.2",
     "autoprefixer": "10.4.14",
     "axios": "^1.4.0",
     "bcrypt": "^5.1.0",
     "bcryptjs": "^2.4.3",
+    "emoji-picker-react": "^4.9.2",
     "eslint": "8.41.0",
     "eslint-config-next": "13.4.4",
     "firebase": "^10.12.0",
@@ -25,6 +27,7 @@
     "postcss": "8.4.24",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-firebase-hooks": "^5.1.1",
     "react-hot-toast": "^2.4.1",
     "react-icons": "^4.8.0",
     "react-tooltip": "^5.26.4",

@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import moment from "moment/moment";
 import { motion } from "framer-motion";
 import AllTasks from "../../../components/AllTasks";
@@ -13,20 +13,26 @@ import { addTodos } from "../../../services/addTodo";
 import { v4 as uuidv4 } from 'uuid';
 import { db } from "../../../server/firebase";
 import { collection, query, where, onSnapshot } from "firebase/firestore";
+import { useRouter } from "next/navigation";
+import { AiOutlineUser } from "react-icons/ai";
+import Picker from 'emoji-picker-react';
+import { MdAddReaction } from "react-icons/md";
 
 export default function Home() {
   const [todo, setTodo] = useState("");
   const [loading, setLoading] = useState(false);
   const [todoList, setTodoList] = useState([]);
-  const [toggle, setToggle] = useState(false);
-  const [undo, setUndo] = useState(false);
   const [currentTime, setCurrentTime] = useState('');
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const pickerRef = useRef(null);
+  const buttonRef = useRef(null);
   const currentUser = useAuth()
   const currentDate = moment().format("MMMM Do YYYY")
+  const router = useRouter();
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentTime(moment().format('h:mm a'));
+      setCurrentTime(moment().format('h:mm A'));
     }, 1000);
 
     return () => clearInterval(interval);
@@ -41,7 +47,7 @@ export default function Home() {
         status: "pending",
         createdAt: `${currentDate + " " + currentTime}`,
         updatedAt: `${currentDate + " " + currentTime}`,
-        priority: "high",
+        isImportant: false,
         userId: currentUser.uid,
       }
       try {
@@ -91,6 +97,36 @@ export default function Home() {
     getWishlistData();
   }, [currentUser]);
 
+
+  useEffect(() => {
+    if (currentUser) {
+      router.push("/Home")
+    } else {
+      router.push('/Login')
+    }
+  }, [currentUser]);
+
+  const onEmojiClick = (emojiObject) => {
+    setTodo(prevTodo => prevTodo + emojiObject.emoji)
+    setShowEmojiPicker(false);
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (pickerRef.current && !pickerRef.current.contains(event.target) &&
+        buttonRef.current && !buttonRef.current.contains(event.target)) {
+        setShowEmojiPicker(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+
   return (
     <div>
       <motion.div
@@ -101,38 +137,60 @@ export default function Home() {
         transition={{ delay: 0 }}
       >
         <Header />
-        <User
-          currentUser={currentUser}
-        />
+        <User />
         <div className="h-[700px] mt-10 transition-all w-11/12 md:w-3/4 lg:w-2/3 xl:w-2/3 2xl:w-1/2  bg-slate-900  rounded-lg p-10 drop-shadow-md shadow-cyan-800">
           <div className="mt-3 text-sm  text-white flex justify-between items-center">
             <p className=" font-semibold">{currentDate}</p>
             <p className=" font-semibold">{currentTime}</p>
           </div>
-
+          <div
+            className="flex pt-4 items-center transition text-xl font-semibold text-white "
+          >
+            Hello, &nbsp;
+            {currentUser && currentUser.photoURL ? <img src={currentUser.photoURL} alt="avatar" className="h-6 w-6 rounded-full" /> : <AiOutlineUser className="text-2xl text-cyan-600 " />}
+            <span className="ml-2 text-md"> {currentUser?.displayName}</span>
+          </div>
           <form
             onSubmit={handleTodo}
             className="w-full mt-16 flex flex-row text-sm text-center justify-center "
           >
             <div className="w-full">
               <input
-                className=" w-full text-gray-400  font-semibold outline-none p-2 bg-inherit border-b  border-cyan-600 placeholder-teal-700 dark:placeholder-gray-400 placeholder:text-[14px]"
+                id="todo"
+                className="focus:border-b focus:border-cyan-400 caret-cyan-400 transition duration-300 w-full text-gray-400  font-semibold outline-none p-2 bg-inherit border-b border-cyan-600 dark:placeholder-gray-400 placeholder:text-[14px]"
                 placeholder="What needs to be done today?"
                 value={todo}
                 onChange={(e) => setTodo(e.target.value)}
                 required
+                autoComplete="off"
               />
             </div>
-            <button
-              type="submit"
-              className="flex justify-center items-center w-[60px] text-md  h-8 mt-2 bg-cyan-600 hover:bg-cyan-500 text-center transition text-white rounded-md ml-3"
-            >
-              <AiOutlineSend className="text-lg text-white" />
-            </button>
+            <div className="flex items-center relative" ref={buttonRef}>
+              <button type="button" onClick={() => setShowEmojiPicker(!showEmojiPicker)}>
+                <MdAddReaction className="text-xl text-gray-500 hover:text-cyan-400 transition duration-300" />
+              </button>
+              {showEmojiPicker &&
+                <motion.div
+                  initial={{ opacity: 0, }}
+                  animate={{ opacity: 1, }}
+                  exit={{ opacity: 0 }}
+                  transition={{ delay: 0.50 }}
+                  className="absolute right-6 top-10 z-10" ref={pickerRef}>
+                  <Picker
+                    onEmojiClick={onEmojiClick} />
+                </motion.div>
+              }
+              <button
+                type="submit"
+                className="flex justify-center items-center w-[50px] text-md h-8 bg-cyan-600 hover:bg-cyan-500 text-center transition text-white rounded-md ml-3"
+              >
+                <AiOutlineSend className="text-lg text-white" />
+              </button>
+            </div>
           </form>
 
-          <div className="mt-6 flex flex-wrap gap-10">
-            <p className="text-gray-400">
+          <div className="mt-6 flex flex-wrap gap-10 ">
+            <p className="text-gray-400 hidden sm:block">
               Total
               <motion.span
                 initial={{ opacity: 0, y: 5 }}
@@ -161,7 +219,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 5 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, x: 5 }}
-              transition={{ delay: 0.25 }} className="text-gray-400">
+              transition={{ delay: 0.25 }} className="text-gray-400 ">
               Completed
               <motion.span
                 initial={{ opacity: 0, y: 5 }}
@@ -171,8 +229,8 @@ export default function Home() {
                 className="ml-2 px-3 py-[1px] text-sm text-white bg-cyan-500 rounded-md">{todoList.filter((todo) => todo.status === "completed").length}
               </motion.span>
             </p>
-
           </div>
+
           <SimpleBar className="h-[400px] mt-2">
             <div className="mt-4">
               <AllTasks

@@ -1,18 +1,17 @@
 "use client";
 import "./globals.css";
-import { Inter } from "next/font/google";
 import Header from "./common/header";
 import { Toaster } from "react-hot-toast";
-import useAuth from "../../helpers/hooks/useAuth";
-const inter = Inter({ subsets: ["latin"] });
-
+import { inter } from "./fonts";
+import Head from "next/head";
 export default function RootLayout({ children }) {
-  const user = useAuth()
   return (
     <html lang="en">
-      <body className={inter.className} suppressHydrationWarning={true}>
-        <link rel="icon" href="/favicon.ico" sizes="any" />
+      <head>
+        <link rel="icon" href="/favicon.ico" sizes="any" as="image" />
         <title>Todo</title>
+      </head>
+      <body className={inter.className} suppressHydrationWarning={true}>
         <Header />
         {children}
         <Toaster position="top-right" />

@@ -1,5 +1,4 @@
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
 import {
     GoogleAuthProvider,
     FacebookAuthProvider,
@@ -32,10 +31,9 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-const analytics = getAnalytics(app);
 const db = getFirestore(app);
 const googleProvider = new GoogleAuthProvider();
-const facebookProvider = new FacebookAuthProvider();
+// const facebookProvider = new FacebookAuthProvider();
 
 const signInWithGoogle = async () => {
     try {
@@ -61,29 +59,29 @@ const signInWithGoogle = async () => {
     }
 };
 
-const signInWithFacebook = async () => {
-    try {
-        const res = await signInWithPopup(auth, facebookProvider);
-        const user = res.user;
-        const q = query(collection(db, "users"), where("uid", "==", user.uid));
-        const docs = await getDocs(q);
-        if (docs.docs.length === 0) {
-            await addDoc(collection(db, "users"), {
-                uid: user.uid,
-                name: user.displayName,
-                authProvider: "google",
-                email: user.email,
-            });
-        }
-        toast.success("Successfully signed in!", {
-            id: 'signInWithFacebookSuccess'
-        })
-    } catch (err) {
-        toast.error(err.message,{
-            id: 'signInWithFacebookFail'
-        });
-    }
-};
+// const signInWithFacebook = async () => {
+//     try {
+//         const res = await signInWithPopup(auth, facebookProvider);
+//         const user = res.user;
+//         const q = query(collection(db, "users"), where("uid", "==", user.uid));
+//         const docs = await getDocs(q);
+//         if (docs.docs.length === 0) {
+//             await addDoc(collection(db, "users"), {
+//                 uid: user.uid,
+//                 name: user.displayName,
+//                 authProvider: "google",
+//                 email: user.email,
+//             });
+//         }
+//         toast.success("Successfully signed in!", {
+//             id: 'signInWithFacebookSuccess'
+//         })
+//     } catch (err) {
+//         toast.error(err.message,{
+//             id: 'signInWithFacebookFail'
+//         });
+//     }
+// };
 
 const logInWithEmailAndPassword = async (email, password) => {
     try {
@@ -141,7 +139,7 @@ export {
     auth,
     db,
     signInWithGoogle,
-    signInWithFacebook,
+    // signInWithFacebook,
     logInWithEmailAndPassword,
     registerWithEmailAndPassword,
     logout,

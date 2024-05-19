@@ -1,25 +1,24 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
-import { AiFillWarning } from "react-icons/ai";
 import Loading from "../../../components/Loading";
-import toast, { Toaster } from "react-hot-toast";
 import { AiOutlineMail } from "react-icons/ai";
 import { AiFillEyeInvisible } from "react-icons/ai";
 import { AiFillEye } from "react-icons/ai";
 import { FcGoogle } from "react-icons/fc";
-import { BsFacebook } from "react-icons/bs";
-import { signInWithGoogle, signInWithFacebook, logInWithEmailAndPassword } from "../../../server/firebase";
+import { signInWithGoogle, logInWithEmailAndPassword } from "../../../server/firebase";
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { signinSchema } from "../../../helpers/Form/signinSchema";
-
+import { useRouter } from "next/navigation";
+import useAuth from "../../../helpers/hooks/useAuth";
 
 export default function Login() {
-  const [loading, setLoading] = useState(false);
+  const [signInLoading, setSignInLoading] = useState(false);
   const [visibility, setVisiblity] = useState(false);
-  
+  const user = useAuth()
+  const router = useRouter();
+
   const initialValues = {
     email: '',
     password: '',
@@ -27,16 +26,26 @@ export default function Login() {
 
   const handleSubmit = async (values, { setSubmitting }) => {
     const { email, password } = values
-    setLoading(true);
+    setSignInLoading(true);
     try {
       await logInWithEmailAndPassword(email, password);
+      router.push("/Home")
     } catch (error) {
       console.error('Error registering user:', error.message);
+      router.push('/Login')
     } finally {
-      setLoading(false);
+      setSignInLoading(false);
     }
     setSubmitting(false);
   };
+
+  useEffect(() => {
+    if (user) {
+      router.push("/Home")
+    } else {
+      router.push('/Login')
+    }
+  }, [user])
 
 
   return (
@@ -142,8 +151,13 @@ export default function Login() {
                       </div>
                     </div>
                     <div className="text-right">
+
                       <p className=" transition duration-300">
-                        <span className="cursor-pointer text-gray-200 hover:text-cyan-400 font-semibold transition duration-300 text-sm">Forgot Password?</span>
+                        <Link
+                          href="/ResetPassword"
+                        >
+                          <span className="cursor-pointer text-gray-200 hover:text-cyan-400 font-semibold transition duration-300 text-sm">Forgot Password?</span>
+                        </Link>
                       </p>
                     </div>
                     <div>
@@ -151,7 +165,7 @@ export default function Login() {
                         type="submit"
                         className="w-full  flex justify-center items-center gap-2 text-white duration-300 focus:ring-2 font-medium rounded-lg text-sm px-5 py-2.5 text-center transition bg-cyan-600 hover:bg-cyan-700 "
                       >
-                        {loading ? <> <Loading />Signing you in...</> : 'Sign in'}
+                        {signInLoading ? <> <Loading />Signing you in...</> : 'Sign in'}
                       </button>
                     </div>
                     <p className="text-sm text-center font-semibold text-white">
@@ -169,7 +183,7 @@ export default function Login() {
                       </p>
                     </div>
                     <div className="flex flex-row flex-wrap sm:flex-nowrap gap-4 sm:gap-0 w-full ">
-                      <div className="flex items-center justify-center h-[52px] w-full sm:w-1/2 ">
+                      <div className="flex items-center justify-center h-[52px] w-full ">
                         <button
                           type="button"
                           onClick={signInWithGoogle}
@@ -179,7 +193,7 @@ export default function Login() {
                           <span className="ml-2 text-sm">Sign in with Google</span>
                         </button>
                       </div>
-                      <div className="flex items-center justify-start h-[52px] w-full sm:w-1/2 ml-0 sm:ml-4">
+                      {/* <div className="flex items-center justify-start h-[52px] w-full sm:w-1/2 ml-0 sm:ml-4">
                         <button
                           type="button"
                           onClick={signInWithFacebook}
@@ -188,7 +202,7 @@ export default function Login() {
                           <BsFacebook className="text-xl text-[#1778f2]" />
                           <span className="ml-2">Sign in with Facebook</span>
                         </button>
-                      </div>
+                      </div> */}
                     </div>
                   </Form>
                 )}

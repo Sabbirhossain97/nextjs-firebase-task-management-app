@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
-import Cookies from 'js-cookie';
 
-let authToken = Cookies.get("authToken");
+// let authToken = Cookies.get("authToken");
 
 export default function middleware(request) {
   const req = request;

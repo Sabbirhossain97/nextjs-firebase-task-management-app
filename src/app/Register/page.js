@@ -1,20 +1,18 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import { useState,useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import Loading from "../../../components/Loading";
-import { AiFillWarning } from "react-icons/ai";
-import toast, { Toaster } from "react-hot-toast";
 import { AiOutlineMail } from "react-icons/ai";
 import { AiFillEyeInvisible } from "react-icons/ai";
 import { AiFillEye } from "react-icons/ai";
 import { FcGoogle } from "react-icons/fc";
-import { BsFacebook } from "react-icons/bs";
+// import { BsFacebook } from "react-icons/bs";
 import { signupSchema } from "../../../helpers/Form/signupSchema";
 import { Formik, Form, Field, ErrorMessage } from 'formik';
-import { registerWithEmailAndPassword, signInWithFacebook, signInWithGoogle } from "../../../server/firebase";
+import { registerWithEmailAndPassword, signInWithGoogle } from "../../../server/firebase";
+import useAuth from "../../../helpers/hooks/useAuth";
 
 export default function Register() {
   const [visibility, setVisiblity] = useState({
@@ -22,6 +20,7 @@ export default function Register() {
     confirmPassword: false
   });
   const [loading, setLoading] = useState(false)
+  const user = useAuth()
 
   const router = useRouter();
 
@@ -34,16 +33,27 @@ export default function Register() {
 
   const handleSubmit = async (values, { setSubmitting }) => {
     const { username, email, password } = values
-    setLoading(true); 
+    setLoading(true);
     try {
       await registerWithEmailAndPassword(username, email, password);
+      router.push("/Home")
     } catch (error) {
       console.error('Error registering user:', error.message);
+      router.push("/Register")
     } finally {
       setLoading(false);
     }
     setSubmitting(false);
   };
+
+  useEffect(() => {
+    if (user) {
+      router.push("/Home")
+    } else {
+      router.push('/Register')
+    }
+  }, [user])
+
 
   return (
     <div>
@@ -61,7 +71,7 @@ export default function Register() {
               validationSchema={signupSchema}
               onSubmit={handleSubmit}
             >
-              {({  errors, touched }) => (
+              {({ errors, touched }) => (
                 <Form
                   className="p-6 space-y-6 md:space-y-6 sm:p-8"
                 >
@@ -82,7 +92,7 @@ export default function Register() {
                         className={`${errors.email && touched.email ? 'border-cyan-600' : 'border-gray-600'
                           } outline-none border sm:text-sm rounded-lg block w-full p-2.5 bg-slate-800 focus:border-cyan-500 text-white transition duration-300`}
                         autoComplete="off"
-                     />
+                      />
                       <AnimatePresence>
                         <ErrorMessage name="username" >
                           {(message) => (
@@ -228,7 +238,7 @@ export default function Register() {
                         type="submit"
                         className="w-full flex justify-center items-center gap-2 text-white bg-primary-600 hover:bg-primary-700 focus:ring-2 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center transition bg-cyan-600 hover:bg-cyan-700 dark:focus:ring-primary-800"
                       >
-                        {loading ? <> <Loading />Creating...</> : 'Create an account'} 
+                        {loading ? <> <Loading />Creating...</> : 'Create an account'}
                       </button>
                     </div>
                     <p className="text-sm text-center font-semibold text-white">
@@ -245,8 +255,8 @@ export default function Register() {
                         or
                       </p>
                     </div>
-                    <div className="flex flex-row flex-wrap sm:flex-nowrap gap-4 sm:gap-0 w-full ">
-                      <div className="flex items-center justify-center h-[52px] w-full sm:w-1/2 ">
+                    <div className="flex flex-row flex-wrap sm:flex-nowrap gap-4 sm:gap-0 w-full">
+                      <div className="flex items-center justify-center h-[52px] w-full">
                         <button
                           type="button"
                           onClick={signInWithGoogle}
@@ -256,7 +266,7 @@ export default function Register() {
                           <span className="ml-2 text-sm">Sign in with Google</span>
                         </button>
                       </div>
-                      <div className="flex items-center justify-start h-[52px] w-full sm:w-1/2 ml-0 sm:ml-4">
+                      {/* <div className="flex items-center justify-start h-[52px] w-full sm:w-1/2 ml-0 sm:ml-4">
                         <button
                           type="button"
                           onClick={signInWithFacebook}
@@ -265,7 +275,7 @@ export default function Register() {
                           <BsFacebook className="text-xl text-[#1778f2]" />
                           <span className="ml-2">Sign in with Facebook</span>
                         </button>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                 </Form>

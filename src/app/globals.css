@@ -26,3 +26,7 @@ body {
     rgb(var(--background-start-rgb));
 }
 
+.ant-popconfirm-buttons .ant-btn-primary {
+  background-color: #4096ff !important
+}
+
