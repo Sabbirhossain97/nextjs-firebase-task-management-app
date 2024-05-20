@@ -3,7 +3,7 @@ import "./globals.css";
 import Header from "./common/header";
 import { Toaster } from "react-hot-toast";
 import { inter } from "./fonts";
-import Head from "next/head";
+
 export default function RootLayout({ children }) {
   return (
     <html lang="en">

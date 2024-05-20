@@ -3,7 +3,6 @@ import { useEffect, useState, useRef } from "react";
 import moment from "moment/moment";
 import { motion } from "framer-motion";
 import AllTasks from "../../../components/AllTasks";
-import Header from "../common/header";
 import User from "../../../components/User";
 import { AiOutlineSend } from "react-icons/ai";
 import SimpleBar from "simplebar-react";
@@ -129,16 +128,9 @@ export default function Home() {
 
   return (
     <div>
-      <motion.div
-        className="relative transition-[height] flex justify-center items-center min-h-screen bg-gray-100 dark:bg-gradient-to-br from-slate-800 to-slate-900 border-gray-600"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ delay: 0 }}
-      >
-        <Header />
-        <User />
-        <div className="h-[700px] pt-10 transition-all w-full sm:w-11/12 md:w-3/4 lg:w-2/3 xl:w-2/3 2xl:w-1/2 sm:bg-slate-900 rounded-lg p-4 sm:p-10 drop-shadow-md shadow-cyan-800">
+      <User />
+      <div className="relative pt-4 transition-[height] flex justify-center items-center min-h-screen dark:bg-gradient-to-br bg-slate-900 border-gray-600">
+        <div className="h-[700px] transition-all w-full sm:w-11/12 md:w-3/4 lg:w-2/3 xl:w-2/3 2xl:w-1/2 sm:bg-slate-800/50 rounded-lg p-6 sm:p-10 drop-shadow-md shadow-cyan-800">
           <div className="mt-3 text-sm  text-white flex justify-between items-center">
             <p className=" font-semibold">{currentDate}</p>
             <p className=" font-semibold">{currentTime}</p>
@@ -242,7 +234,7 @@ export default function Home() {
             </div>
           </SimpleBar>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 }

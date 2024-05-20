@@ -49,11 +49,10 @@ export default function Login() {
 
 
   return (
-    <div>
-
-      <section className=" bg-slate-900">
+    <div >
+      <section className="bg-slate-900">
         <motion.div
-          className="flex flex-col h-screen w-11/12 md:w-full items-center justify-center px-2 py-8 mx-auto md:h-screen lg:py-0"
+          className="flex flex-col h-screen w-11/12 md:w-full items-center justify-center px-2 py-2 mx-auto md:h-screen lg:py-0"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
