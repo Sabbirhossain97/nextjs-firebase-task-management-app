@@ -138,7 +138,7 @@ export default function Home() {
       >
         <Header />
         <User />
-        <div className="h-[700px] mt-10 transition-all w-11/12 md:w-3/4 lg:w-2/3 xl:w-2/3 2xl:w-1/2  bg-slate-900  rounded-lg p-10 drop-shadow-md shadow-cyan-800">
+        <div className="h-[700px] pt-10 transition-all w-full sm:w-11/12 md:w-3/4 lg:w-2/3 xl:w-2/3 2xl:w-1/2 sm:bg-slate-900 rounded-lg p-4 sm:p-10 drop-shadow-md shadow-cyan-800">
           <div className="mt-3 text-sm  text-white flex justify-between items-center">
             <p className=" font-semibold">{currentDate}</p>
             <p className=" font-semibold">{currentTime}</p>

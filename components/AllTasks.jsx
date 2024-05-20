@@ -76,6 +76,11 @@ export default function AllTasks({ user, todoList, setLoading }) {
         return item;
       }
     });
+    setUpdates({
+      title: result[0].title,
+      status: result[0].status,
+      isImportant: result[0].isImportant
+    });
     setCurrentItem(result);
   };
 
@@ -90,9 +95,9 @@ export default function AllTasks({ user, todoList, setLoading }) {
   };
 
   const onEmojiClick = (emojiObject) => {
-    setUpdates((prevUpdates) => ({
-      ...prevUpdates,
-      title: prevUpdates.title + emojiObject.emoji,
+    setUpdates((currentItem) => ({
+      ...currentItem,
+      title: currentItem.title + emojiObject.emoji,
     }));
     setShowEmojiPicker(false);
   };
@@ -115,7 +120,7 @@ export default function AllTasks({ user, todoList, setLoading }) {
 
   return (
     <>
-      <ul className=" transition duration-300 ease-out">
+      <ul className="transition duration-300 ease-out ">
         {todoList ? (
           todoList.length === 0 ? (
             <motion.div
@@ -163,9 +168,9 @@ export default function AllTasks({ user, todoList, setLoading }) {
                       transition={{ delay: 0.25 }}
                     >
                       <div className="flex gap-2">
-                        <div className={`${item.status === "completed" && 'border-gray-600'} relative w-11/12 h-auto p-2 bg-transparent transition ${edit && item.id === currentItem?.[0]?.id ? "border-cyan-400 border-b-2" : "border-cyan-600 border-b"}  flex justify-start items-center px-1`}>
+                        <div className={`${item.status === "completed" && 'border-gray-600'} relative min-w-[400px] w-11/12 h-auto p-2 bg-transparent transition ${edit && item.id === currentItem?.[0]?.id ? "border-cyan-400 border-b-2" : "border-cyan-600 border-b"} flex justify-start items-center px-1`}>
                           <div className="flex items-center gap-1">
-                           {!edit && item.id === currentItem?.[0]?.id} <Popconfirm
+                            {!edit && item.id === currentItem?.[0]?.id} <Popconfirm
                               title={item.isImportant ? "Mark as not important" : "Mark as important"}
                               onConfirm={() => handleToggleImportant(item.isImportant, item)}
                               onCancel={cancel}
@@ -189,7 +194,6 @@ export default function AllTasks({ user, todoList, setLoading }) {
                           {edit && item.id === currentItem[0].id ? (
                             <>
                               <input
-                                defaultValue={item.title}
                                 value={updates.title}
                                 onChange={(e) => {
                                   setUpdates((prevUpdates) => {
@@ -213,14 +217,13 @@ export default function AllTasks({ user, todoList, setLoading }) {
                                   exit={{ opacity: 0 }}
                                   transition={{ delay: 0.50 }}
                                   className="absolute right-6 top-10 z-10" ref={pickerRef}>
-                                  <Picker
-                                    onEmojiClick={onEmojiClick} />
+                                  <Picker onEmojiClick={onEmojiClick} />
                                 </motion.div>
                               }
                             </>
                           ) : (
                             <motion.p
-                              className={`${item.status === "completed" ? 'line-through text-gray-400' : ""} decoration-white decoration-3 text-sm mt-0.5 ml-2 text-gray-300 font-semibold`}
+                              className={`${item.status === "completed" ? 'line-through text-gray-400' : ""} overflow-hidden line-clamp-3 decoration-white decoration-3 text-sm mt-0.5 ml-2 text-gray-300 break-words ... font-semibold`}
                               initial={{ opacity: 0, y: 5 }}
                               animate={{ opacity: 1, y: 0 }}
                               exit={{ opacity: 0, x: 5 }}
