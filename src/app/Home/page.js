@@ -16,6 +16,7 @@ import { useRouter } from "next/navigation";
 import { AiOutlineUser } from "react-icons/ai";
 import Picker from 'emoji-picker-react';
 import { MdAddReaction } from "react-icons/md";
+import toast from "react-hot-toast";
 
 export default function Home() {
   const [todo, setTodo] = useState("");
@@ -39,6 +40,10 @@ export default function Home() {
 
   const handleTodo = (e) => {
     e.preventDefault()
+    if (todo.trim() === "") {
+      toast.error("please Enter something!")
+      return
+    }
     if (currentUser) {
       const payload = {
         id: uuidv4(),
